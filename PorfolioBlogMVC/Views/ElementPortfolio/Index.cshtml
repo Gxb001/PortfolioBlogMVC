@@ -1,0 +1,40 @@
+@model IEnumerable<PorfolioBlogMVC.Models.ElementPortfolio>
+
+@{
+    ViewData["Title"] = "Portfolio";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Portfolio.css"/>
+}
+
+<div class="portfolio-container">
+    <h1 class="portfolio-title">Mon Portfolio</h1>
+    <p class="portfolio-intro">
+        <a asp-action="Create" class="btn-create">Créer Nouveau</a>
+    </p>
+    <div class="portfolio-grid">
+        @foreach (var item in Model)
+        {
+            <div class="portfolio-card">
+                @* @if (!string.IsNullOrEmpty(item.ImageUrl)) // Suppose une propriété ImageUrl dans le modèle *@
+                @* { *@
+                @*     <img src="@item.ImageUrl" alt="@item.Titre" class="card-image" /> *@
+                @* } *@
+                <div class="card-content">
+                    <h3 class="card-title">@Html.DisplayFor(modelItem => item.Titre)</h3>
+                    <p class="card-description">@Html.DisplayFor(modelItem => item.Description)</p>
+                    <div class="card-meta">
+                        <span>Créé le : @Html.DisplayFor(modelItem => item.DateCreation)</span>
+                        <span>Par : @Html.DisplayFor(modelItem => item.Createur.Id)</span>
+                    </div>
+                    <div class="card-actions">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-edit">Modifier</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-details">Détails</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn-delete">Supprimer</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

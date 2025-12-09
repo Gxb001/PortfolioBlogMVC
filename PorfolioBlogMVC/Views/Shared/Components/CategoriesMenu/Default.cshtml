@@ -1,0 +1,16 @@
+@model List<PorfolioBlogMVC.Models.CategorieArticle>
+
+@foreach (var categorie in Model)
+{
+    <div>@categorie.Nom</div>
+}
+
+@if (User.IsInRole("Admin"))
+{
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="CategorieArticle" asp-action="Index">Catégories</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link text-dark" asp-controller="Tag" asp-action="Index">Tags</a>
+    </li>
+}

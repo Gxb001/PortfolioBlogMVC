@@ -18,5 +18,7 @@ public class Commentaire
 
     // Article lié
     [ForeignKey(nameof(Article))] public int ArticleId { get; set; }
-    [DeleteBehavior(DeleteBehavior.NoAction)] public required Article Article { get; set; }
+
+    [DeleteBehavior(DeleteBehavior.NoAction)]
+    public required Article Article { get; set; }
 }

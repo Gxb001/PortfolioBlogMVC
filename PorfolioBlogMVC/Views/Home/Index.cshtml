@@ -1,8 +1,86 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Accueil - Mon Portfolio & Blog";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css"/>
+}
+
+<div class="home-container">
+    <!-- Section Hero (Bannière d'accueil) -->
+    <section class="hero-section text-center">
+        <div class="hero-content">
+            <h1 class="hero-title">Bienvenue sur mon espace créatif</h1>
+            <p class="hero-subtitle">
+                Découvrez mon <a href="@Url.Action("Index", "ElementPortfolio")">portfolio</a> et explorez mes <a
+                    href="@Url.Action("Index", "Article")">articles</a>.
+            </p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a href="@Url.Action("Create", "Article")" class="btn btn-primary btn-lg">Écrire un article</a>
+            }
+            else
+            {
+                <a href="@Url.Action("Login", "Account", new { area = "Identity" })"
+                   class="btn btn-outline-light btn-lg">Se connecter</a>
+            }
+        </div>
+    </section>
+
+    <!-- Section Portfolio -->
+    <section class="portfolio-section">
+        <h2 class="section-title">Mon Portfolio</h2>
+        <p class="section-description">
+            Découvrez mes projets récents et mes réalisations.
+        </p>
+        <div class="portfolio-grid">
+            <!-- Exemple de carte pour un élément de portfolio -->
+            <div class="portfolio-card">
+                <div class="card-image">
+                    <img src="~/images/portfolio-default.jpg" alt="Projet exemple" class="img-fluid">
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">Projet Exemple</h3>
+                    <p class="card-text">Une brève description de mon projet.</p>
+                    <a href="@Url.Action("Index", "ElementPortfolio")" class="btn btn-secondary">Voir plus</a>
+                </div>
+            </div>
+            <!-- Ajoute d'autres cartes ici -->
+        </div>
+    </section>
+
+    <!-- Section Blog -->
+    <section class="blog-section">
+        <h2 class="section-title">Derniers Articles</h2>
+        <p class="section-description">
+            Mes réflexions, tutoriels et actualités.
+        </p>
+        <div class="blog-grid">
+            <!-- Exemple de carte pour un article -->
+            @{
+                // Récupère les 3 derniers articles (exemple)
+                var lastArticles = ViewBag.LastArticles as IEnumerable<Article>;
+                if (lastArticles != null)
+                {
+                    foreach (var article in lastArticles.Take(3))
+                    {
+                        <div class="blog-card">
+                            <div class="card-content">
+                                <h3 class="card-title">@article.Titre</h3>
+                                <p class="card-meta">Publié le @article.DatePublication.ToString("dd/MM/yyyy")</p>
+                                <p class="card-text">@article.Contenu.Substring(0, Math.Min(100, article.Contenu.Length))...</p>
+                                <a href="@Url.Action("Details", "Article", new { id = article.Id })"
+                                   class="btn btn-secondary">Lire la suite</a>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <p>Aucun article pour le moment.</p>
+                }
+            }
+        </div>
+        <a href="@Url.Action("Index", "Article")" class="btn btn-primary">Voir tous les articles</a>
+    </section>
 </div>
