@@ -1,6 +1,6 @@
-# PorfolioBlogMVC - Guide de démarrage
+# PortfolioBlogMVC - Guide de démarrage
 
-Ce guide décrit les étapes pour préparer l'environnement, résoudre les erreurs courantes (LocalDB / certificat / dotnet-ef) et exécuter les migrations pour `PorfolioBlogMVC`.
+Ce guide décrit les étapes pour préparer l'environnement, résoudre les erreurs courantes (LocalDB / certificat / dotnet-ef) et exécuter les migrations pour `PortfolioBlogMVC`.
 
 ## Prérequis
 1. Windows (développement local).  
@@ -18,9 +18,9 @@ Ce guide décrit les étapes pour préparer l'environnement, résoudre les erreu
 
 2\. Mettre à jour les packages NuGet (si nécessaire)  
 - Exemple :  
-  `dotnet add PorfolioBlogMVC package Microsoft.EntityFrameworkCore.Design --version 8.0.20`  
-  `dotnet add PorfolioBlogMVC package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.20`  
-  `dotnet add PorfolioBlogMVC package Microsoft.EntityFrameworkCore.Tools --version 8.0.20`
+  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.Design --version 8.0.20`  
+  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.20`  
+  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.Tools --version 8.0.20`
 
 3\. Installer / vérifier LocalDB (si vous utilisez `(localdb)\mssqllocaldb`)  
 - Vérifier les instances : `sqllocaldb info`  
@@ -32,21 +32,21 @@ Ce guide décrit les étapes pour préparer l'environnement, résoudre les erreu
 - Après installation, ouvrez un nouveau terminal.
 
 4\. Alternative : utiliser `.\SQLEXPRESS`  
-- Modifier la chaîne de connexion dans `PorfolioBlogMVC/appsettings.json` pour pointer vers `.\SQLEXPRESS` si vous préférez cette instance.
+- Modifier la chaîne de connexion dans `PortfolioBlogMVC/appsettings.json` pour pointer vers `.\SQLEXPRESS` si vous préférez cette instance.
 
 ## Chaîne de connexion & problème de certificat
 - Pour le développement, si vous obtenez l'erreur SSL "autorité qui n'est pas approuvée", ajoutez dans la chaîne de connexion : `TrustServerCertificate=True` (ou `Encrypt=False`).  
-- Exemple de clé à vérifier dans `PorfolioBlogMVC/appsettings.json` :  
+- Exemple de clé à vérifier dans `PortfolioBlogMVC/appsettings.json` :  
   `DefaultConnection` doit contenir `TrustServerCertificate=True` ou `Encrypt=False` si vous ne gérez pas de certificat approuvé.
 
 Sécurité : en production, installez un certificat émis par une CA approuvée ou ajoutez l'AC racine dans les Trusted Root Certification Authorities, puis supprimez `TrustServerCertificate=True`.
 
 ## Migrations et mise à jour de la base
 1\. Créer une migration (si nécessaire) :  
-`dotnet ef migrations add InitialCreate --project PorfolioBlogMVC --startup-project PorfolioBlogMVC`
+`dotnet ef migrations add InitialCreate --project PortfolioBlogMVC --startup-project PortfolioBlogMVC`
 
 2\. Appliquer la migration / créer la base :  
-`dotnet ef database update --project PorfolioBlogMVC --startup-project PorfolioBlogMVC`
+`dotnet ef database update --project PortfolioBlogMVC --startup-project PortfolioBlogMVC`
 
 Remarque : ces commandes n'ont pas besoin que l'application tourne.
 
