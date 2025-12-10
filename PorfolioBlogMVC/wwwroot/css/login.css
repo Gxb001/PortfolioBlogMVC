@@ -1,0 +1,100 @@
+﻿/* Styles pour la section utilisateur */
+.user-section .nav-link {
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+}
+
+/* Avatar utilisateur */
+.user-avatar {
+    padding: 0.5rem 1rem !important;
+}
+
+.avatar-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-name {
+    font-weight: 500;
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Menu déroulant utilisateur */
+.user-dropdown {
+    min-width: 220px;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+    animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-dropdown .dropdown-item {
+    padding: 0.5rem 1.5rem;
+    transition: all 0.2s;
+}
+
+.user-dropdown .dropdown-item:hover {
+    background-color: rgba(110, 142, 251, 0.1);
+    color: #6e8efb;
+}
+
+.user-dropdown .dropdown-item.text-danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+}
+
+.dropdown-item-form {
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-item-form button {
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 1.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+/* Boutons Inscription/Connexion */
+.user-section .btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 767.98px) {
+    .user-section .btn {
+        margin: 0.25rem 0;
+        width: 100%;
+        text-align: center;
+    }
+
+    .user-name {
+        max-width: 100px;
+    }
+}

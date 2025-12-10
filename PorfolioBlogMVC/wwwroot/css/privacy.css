@@ -1,0 +1,82 @@
+﻿/* Styles spécifiques à la page Privacy */
+.privacy-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.privacy-title {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2.2rem;
+    border-bottom: 2px solid #6e8efb;
+    padding-bottom: 10px;
+}
+
+.privacy-content {
+    line-height: 1.8;
+    color: #333;
+}
+
+.privacy-section {
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.privacy-section h2 {
+    color: #6e8efb;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.privacy-list {
+    margin-left: 20px;
+    margin-bottom: 15px;
+}
+
+.privacy-list li {
+    margin-bottom: 8px;
+}
+
+.privacy-footer {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+    font-style: italic;
+    color: #666;
+}
+
+.btn-edit-privacy {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #6e8efb;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.btn-edit-privacy:hover {
+    background-color: #5a7df4;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .privacy-container {
+        margin: 20px;
+        padding: 15px;
+    }
+
+    .privacy-title {
+        font-size: 1.8rem;
+    }
+}

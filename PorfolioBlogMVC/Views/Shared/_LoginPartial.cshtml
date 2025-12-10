@@ -1,26 +1,73 @@
 ﻿@using Microsoft.AspNetCore.Identity
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css"/>
+}
+
+<ul class="navbar-nav user-section align-items-center">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-        </li>
-        <li class="nav-item">
-            <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-            </form>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center user-avatar" href="#" id="userDropdown"
+               role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="avatar-icon bg-primary text-white d-flex align-items-center justify-content-center me-2">
+                    @{
+                        var firstLetter = !string.IsNullOrEmpty(User.Identity.Name) ? User.Identity.Name.Substring(0, 1).ToUpper() : "U";
+                    }
+                    @firstLetter
+                </div>
+                <span class="user-name me-1">@User.Identity.Name</span>
+                <i class="fas fa-chevron-down ms-1"></i>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end user-dropdown shadow-sm" aria-labelledby="userDropdown">
+                <li>
+                    <a class="dropdown-item" asp-controller="Articles" asp-action="Create">
+                        <i class="fas fa-pen me-2"></i> Écrire un article
+                    </a>
+                </li>
+                @if (User.IsInRole("Admin"))
+                {
+                    <li>
+                        <hr class="dropdown-divider">
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="Categories" asp-action="Index">
+                            <i class="fas fa-tags me-2"></i> Gérer les catégories
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" asp-controller="Tags" asp-action="Index">
+                            <i class="fas fa-hashtag me-2"></i> Gérer les tags
+                        </a>
+                    </li>
+                }
+                <li>
+                    <hr class="dropdown-divider">
+                </li>
+                <li>
+                    <form class="dropdown-item-form" asp-area="Identity" asp-page="/Account/Logout"
+                          asp-route-returnUrl="@Url.Page("/Index", new { area = "" })">
+                        <button type="submit" class="dropdown-item text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i> Déconnexion
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </li>
     }
     else
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
+        <li class="nav-item me-2">
+            <a class="nav-link btn btn-outline-secondary" asp-area="Identity" asp-page="/Account/Register">
+                <i class="fas fa-user-plus me-1"></i> S'inscrire
+            </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
+            <a class="nav-link btn btn-primary" asp-area="Identity" asp-page="/Account/Login">
+                <i class="fas fa-sign-in-alt me-1"></i> Connexion
+            </a>
         </li>
     }
 </ul>

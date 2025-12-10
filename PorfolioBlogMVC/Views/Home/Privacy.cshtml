@@ -1,6 +1,78 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Politique de Confidentialité";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+@section Styles {
+    <link rel="stylesheet" href="~/css/privacy.css"/>
+}
+
+
+<div class="privacy-container">
+    <h1 class="privacy-title">@ViewData["Title"]</h1>
+
+    <div class="privacy-content">
+        <section class="privacy-section">
+            <h2>Introduction</h2>
+            <p>
+                Nous accordons une grande importance à la protection de vos données personnelles.
+                Cette politique explique comment nous collectons, utilisons et protégeons vos informations.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Données collectées</h2>
+            <p>
+                Nous collectons les données suivantes :
+            </p>
+            <ul class="privacy-list">
+                <li>Votre adresse email (lors de l'inscription).</li>
+                <li>Votre nom et prénom (facultatif).</li>
+                <li>Les commentaires que vous publiez.</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Utilisation des données</h2>
+            <p>
+                Vos données sont utilisées uniquement pour :
+            </p>
+            <ul class="privacy-list">
+                <li>Vous identifier en tant qu'utilisateur.</li>
+                <li>Afficher vos articles et commentaires.</li>
+                <li>Améliorer votre expérience sur le site.</li>
+            </ul>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Protection des données</h2>
+            <p>
+                Nous mettons en place des mesures de sécurité pour protéger vos données contre toute perte, altération
+                ou accès non autorisé.
+            </p>
+        </section>
+
+        <section class="privacy-section">
+            <h2>Vos droits</h2>
+            <p>
+                Vous avez le droit de :
+            </p>
+            <ul class="privacy-list">
+                <li>Accéder à vos données personnelles.</li>
+                <li>Les rectifier ou les supprimer.</li>
+                <li>Vous opposer à leur traitement.</li>
+            </ul>
+            <p>
+                Pour exercer ces droits, contactez-nous à <a href="mailto:contact@example.com">contact@example.com</a>.
+            </p>
+        </section>
+
+        <div class="privacy-footer">
+            <p>Dernière mise à jour : <strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong></p>
+            @if (User.IsInRole("Admin"))
+            {
+                <a href="@Url.Action("Edit", "Home", new { page = "privacy" })" class="btn-edit-privacy">Modifier cette
+                    page</a>
+            }
+        </div>
+    </div>
+</div>
