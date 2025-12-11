@@ -1,5 +1,4 @@
-﻿/* Styles spécifiques à la page Privacy */
-.privacy-container {
+﻿.privacy-container {
     max-width: 800px;
     margin: 40px auto;
     padding: 20px;
@@ -69,7 +68,6 @@
     background-color: #5a7df4;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .privacy-container {
         margin: 20px;

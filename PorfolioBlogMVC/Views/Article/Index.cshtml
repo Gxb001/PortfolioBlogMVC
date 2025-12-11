@@ -1,66 +1,134 @@
 @model IEnumerable<PorfolioBlogMVC.Models.Article>
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Articles";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isAdmin = User.IsInRole("Admin");
 }
 
-<h1>Index</h1>
+<link rel="stylesheet" href="~/css/article.css"/>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Titre)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Contenu)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ImagePrincipale)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DatePublication)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Auteur)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Categorie)
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var item in Model)
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Articles</h1>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModal">
+                <i class="bi bi-plus-circle"></i> Créer un nouvel article
+            </button>
+        }
+    </div>
+
+    @if (!User.Identity.IsAuthenticated)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Titre)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Contenu)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImagePrincipale)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DatePublication)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Auteur.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Categorie.Nom)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            Connectez-vous pour créer vos propres articles et commenter.
+        </div>
     }
-    </tbody>
-</table>
+
+    <!-- Modal for Create -->
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Créer un nouvel article</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="createModalBody">
+                    <!-- Content will be loaded via AJAX -->
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Chargement...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Articles Grid -->
+    <div class="article-grid" id="articleGrid">
+        @if (Model.Any())
+        {
+            @foreach (var item in Model)
+            {
+                var isOwner = currentUserId == item.AuteurId;
+                var canEdit = isOwner || isAdmin;
+
+                <div class="article-card">
+                    @if (!string.IsNullOrEmpty(item.ImagePrincipale))
+                    {
+                        <img src="@item.ImagePrincipale" alt="Image pour @item.Titre" class="article-image"/>
+                    }
+                    else
+                    {
+                        <div class="article-image-placeholder">
+                            <i class="bi bi-image"></i>
+                        </div>
+                    }
+
+                    <div class="article-card-body">
+                        <h2 class="article-title">@item.Titre</h2>
+
+                        <p class="article-excerpt">
+                            @if (item.Contenu.Length > 150)
+                            {
+                                @item.Contenu.Substring(0, 150)<text>...</text>
+                            }
+                            else
+                            {
+                                @item.Contenu
+                            }
+                        </p>
+
+                        <div class="article-meta">
+                            <span><i class="bi bi-calendar"></i> @item.DatePublication.ToString("dd/MM/yyyy")</span>
+                            <span><i class="bi bi-person"></i> @item.Auteur.UserName</span>
+                            @if (item.Categorie != null)
+                            {
+                                <span><i class="bi bi-tag"></i> @item.Categorie.Nom</span>
+                            }
+                            <span><i class="bi bi-chat"></i> @item.Commentaires.Count commentaire(s)</span>
+                        </div>
+
+                        <div class="article-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">
+                                <i class="bi bi-eye"></i> Détails
+                            </a>
+
+                            @if (canEdit)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">
+                                    <i class="bi bi-pencil"></i> Modifier
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-trash"></i> Supprimer
+                                </a>
+                            }
+                        </div>
+
+                        @if (isOwner)
+                        {
+                            <span class="badge bg-success article-owner-badge">Votre article</span>
+                        }
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Aucun article disponible pour le moment.
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/article.js"></script>
+}
