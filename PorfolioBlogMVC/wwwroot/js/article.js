@@ -5,7 +5,7 @@
         createModal.addEventListener('show.bs.modal', function () {
             loadCreateForm();
         });
-        
+
         createModal.addEventListener('hidden.bs.modal', function () {
             const modalBody = document.getElementById('createModalBody');
             if (modalBody) {
@@ -46,7 +46,7 @@ function loadCreateForm() {
         })
         .then(html => {
             modalBody.innerHTML = html;
-            
+
             if (typeof jQuery !== 'undefined' && jQuery.validator) {
                 const form = modalBody.querySelector('form');
                 if (form) {
@@ -78,7 +78,7 @@ function showNotification(message, type = 'info') {
     `;
 
     document.body.appendChild(alertDiv);
-    
+
     setTimeout(() => {
         alertDiv.remove();
     }, 5000);

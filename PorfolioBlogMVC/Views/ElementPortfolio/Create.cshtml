@@ -1,41 +1,151 @@
 @model PorfolioBlogMVC.Models.ElementPortfolio
 
 @{
-    ViewData["Title"] = "Créer un Élément";
+    ViewData["Title"] = "Nouveau Projet Portfolio";
+    var tags = ViewBag.Tags as List<Tag>;
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/Portfolio.css"/>
-}
+<link rel="stylesheet" href="~/css/portfolio-form.css"/>
 
-<div class="create-container">
-    <h1 class="create-title">Créer un Nouvel Élément</h1>
-    <div class="create-card">
-        <form asp-action="Create" class="create-form">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Titre" class="form-label"></label>
-                <input asp-for="Titre" class="form-control"/>
-                <span asp-validation-for="Titre" class="text-danger"></span>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="form-header">
+                    <h2>
+                        <i class="fas fa-plus-circle"></i> Créer un Nouveau Projet
+                    </h2>
+                    <p>Partagez votre travail avec le monde</p>
+                </div>
+
+                <form asp-action="Create" method="post" class="portfolio-form">
+                    <div asp-validation-summary="All" class="alert alert-danger"></div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-info-circle"></i> Informations du projet</h4>
+
+                        <div class="mb-4">
+                            <label asp-for="Titre" class="form-label">
+                                <i class="fas fa-heading"></i> Titre du projet *
+                            </label>
+                            <input asp-for="Titre" class="form-control form-control-lg"
+                                   placeholder="Ex: Application de gestion de tâches" required/>
+                            <span asp-validation-for="Titre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description détaillée *
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="8"
+                                      placeholder="Décrivez votre projet, les technologies utilisées, les défis relevés..."
+                                      required></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="fas fa-lightbulb"></i> Conseil : Mentionnez les technologies, le contexte, et
+                                ce qui rend ce projet unique.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-images"></i> Images du projet (optionnel)</h4>
+
+                        <div class="mb-4">
+                            <label for="imageUrls" class="form-label">
+                                <i class="fas fa-link"></i> URLs des images
+                            </label>
+                            <textarea name="imageUrls" id="imageUrls" class="form-control" rows="6"
+                                      placeholder="https://exemple.com/image1.jpg&#10;https://exemple.com/image2.jpg&#10;https://exemple.com/image3.jpg"></textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> Une URL par ligne. La première image sera l'image
+                                principale.
+                            </div>
+                        </div>
+
+                        <div class="image-preview" id="imagePreview" style="display: none;">
+                            <h5>Aperçu des images</h5>
+                            <div class="preview-grid" id="previewGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-tags"></i> Tags (optionnel)</h4>
+
+                        <div class="tags-container">
+                            @if (tags != null && tags.Any())
+                            {
+                                @foreach (var tag in tags)
+                                {
+                                    <label class="tag-checkbox">
+                                        <input type="checkbox" name="selectedTags" value="@tag.Id"/>
+                                        <span class="tag-label"
+                                              style="@(!string.IsNullOrEmpty(tag.Couleur) ? $"background-color: {tag.Couleur}; color: white;" : "")">
+                                            @tag.Nom
+                                        </span>
+                                    </label>
+                                }
+                            }
+                            else
+                            {
+                                <div class="alert alert-info">
+                                    <i class="fas fa-info-circle"></i> Aucun tag disponible. Les tags seront disponibles
+                                    après la migration de la base de données.
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a asp-action="Index" class="btn btn-secondary btn-lg">
+                            <i class="fas fa-times"></i> Annuler
+                        </a>
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="fas fa-check"></i> Créer le projet
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateCreation" class="form-label"></label>
-                <input asp-for="DateCreation" class="form-control" type="datetime-local"/>
-                <span asp-validation-for="DateCreation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreateurId" class="form-label"></label>
-                <select asp-for="CreateurId" class="form-control" asp-items="ViewBag.CreateurId"></select>
-            </div>
-            <div class="form-actions">
-                <input type="submit" value="Créer" class="btn-create"/>
-                <a asp-action="Index" class="btn-back">Retour à la Liste</a>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        // Script inline pour éviter les erreurs de chargement
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log('Form loaded');
+
+            const imageUrlsTextarea = document.getElementById('imageUrls');
+            const imagePreview = document.getElementById('imagePreview');
+            const previewGrid = document.getElementById('previewGrid');
+
+            if (!imageUrlsTextarea) return;
+
+            imageUrlsTextarea.addEventListener('input', function () {
+                const urls = this.value.split('\n').filter(url => url.trim() !== '');
+
+                if (urls.length > 0) {
+                    imagePreview.style.display = 'block';
+                    previewGrid.innerHTML = '';
+
+                    urls.forEach((url, index) => {
+                        const cleanUrl = url.trim();
+                        if (cleanUrl) {
+                            const previewItem = document.createElement('div');
+                            previewItem.className = 'preview-item';
+                            previewItem.innerHTML = `
+                                <img src="${cleanUrl}" alt="Image ${index + 1}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2216%22%3EErreur%3C/text%3E%3C/svg%3E'">
+                                ${index === 0 ? '<div class="preview-badge"><i class="fas fa-star"></i> Principale</div>' : ''}
+                            `;
+                            previewGrid.appendChild(previewItem);
+                        }
+                    });
+                } else {
+                    imagePreview.style.display = 'none';
+                }
+            });
+        });
+    </script>
+}

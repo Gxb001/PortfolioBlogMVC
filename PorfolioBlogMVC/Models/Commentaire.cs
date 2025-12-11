@@ -14,12 +14,12 @@ public class Commentaire
 
     // Auteur du commentaire
     [ForeignKey(nameof(Auteur))] public required string AuteurId { get; set; }
-    
+
     public ApplicationUser Auteur { get; set; } = null!;
 
     // Article lié
     [ForeignKey(nameof(Article))] public int ArticleId { get; set; }
-    
+
     [DeleteBehavior(DeleteBehavior.NoAction)]
     public Article Article { get; set; } = null!;
 }

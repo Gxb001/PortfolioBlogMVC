@@ -1,42 +1,182 @@
 @model PorfolioBlogMVC.Models.ElementPortfolio
+@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Titre;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isOwner = currentUserId == Model.CreateurId;
+    var isAdmin = User.IsInRole("Admin");
+    var canEdit = isOwner || isAdmin;
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/portfolio-details.css"/>
 
-<div>
-    <h4>ElementPortfolio</h4>
-    <hr/>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Titre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Titre)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DateCreation)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DateCreation)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Createur)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Createur.Id)
-        </dd>
-    </dl>
+<div class="portfolio-details-container">
+    <!-- Header avec image de couverture -->
+    <div class="project-header">
+        @if (Model.Images.Any())
+        {
+            var mainImage = Model.Images.FirstOrDefault(i => i.EstImagePrincipale) ?? Model.Images.First();
+            <div class="header-image" style="background-image: url('@mainImage.Url');"></div>
+        }
+        <div class="header-overlay">
+            <div class="container">
+                <a asp-action="Index" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Retour au portfolio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="container project-content">
+        <div class="row">
+            <!-- Colonne principale -->
+            <div class="col-lg-8">
+                <div class="project-info">
+                    @if (canEdit)
+                    {
+                        <div class="owner-alert">
+                            <i class="fas fa-crown"></i> Votre projet
+                        </div>
+                    }
+
+                    <h1 class="project-title">@Model.Titre</h1>
+
+                    <div class="project-meta">
+                        <div class="meta-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Créé le @Model.DateCreation.ToString("dd MMMM yyyy")</span>
+                        </div>
+                        <div class="meta-item">
+                            <i class="fas fa-user"></i>
+                            <span>Par @Model.Createur.UserName</span>
+                        </div>
+                        @if (Model.Images.Any())
+                        {
+                            <div class="meta-item">
+                                <i class="fas fa-images"></i>
+                                <span>@Model.Images.Count image(s)</span>
+                            </div>
+                        }
+                    </div>
+
+                    @if (Model.Tags.Any())
+                    {
+                        <div class="project-tags">
+                            @foreach (var tag in Model.Tags)
+                            {
+                                <span class="tag"
+                                      style="@(!string.IsNullOrEmpty(tag.Couleur) ? $"background-color: {tag.Couleur}; color: white;" : "")">
+                                    @tag.Nom
+                                </span>
+                            }
+                        </div>
+                    }
+
+                    <div class="project-description">
+                        <h3><i class="fas fa-align-left"></i> Description</h3>
+                        <div class="description-content">
+                            @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+                        </div>
+                    </div>
+
+                    @if (Model.Images.Any())
+                    {
+                        <div class="project-gallery">
+                            <h3><i class="fas fa-images"></i> Galerie d'images</h3>
+                            <div class="gallery-grid">
+                                @foreach (var image in Model.Images)
+                                {
+                                    <div class="gallery-item" data-image="@image.Url">
+                                        <img src="@image.Url" alt="Image du projet"/>
+                                        @if (image.EstImagePrincipale)
+                                        {
+                                            <div class="main-badge">
+                                                <i class="fas fa-star"></i> Principale
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <div class="project-sidebar">
+                    @if (canEdit)
+                    {
+                        <div class="sidebar-section">
+                            <h4><i class="fas fa-cog"></i> Actions</h4>
+                            <div class="action-buttons">
+                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block">
+                                    <i class="fas fa-edit"></i> Modifier
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-block">
+                                    <i class="fas fa-trash"></i> Supprimer
+                                </a>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="sidebar-section">
+                        <h4><i class="fas fa-info-circle"></i> Informations</h4>
+                        <dl class="info-list">
+                            <dt><i class="fas fa-hashtag"></i> ID du projet</dt>
+                            <dd>#@Model.Id</dd>
+
+                            <dt><i class="fas fa-calendar-alt"></i> Date de création</dt>
+                            <dd>@Model.DateCreation.ToString("dd/MM/yyyy à HH:mm")</dd>
+
+                            <dt><i class="fas fa-user-circle"></i> Créateur</dt>
+                            <dd>@Model.Createur.UserName</dd>
+
+                            @if (Model.Images.Any())
+                            {
+                                <dt><i class="fas fa-image"></i> Nombre d'images</dt>
+                                <dd>@Model.Images.Count</dd>
+                            }
+
+                            @if (Model.Tags.Any())
+                            {
+                                <dt><i class="fas fa-tags"></i> Tags</dt>
+                                <dd>@Model.Tags.Count</dd>
+                            }
+                        </dl>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h4><i class="fas fa-share-alt"></i> Partager</h4>
+                        <div class="share-buttons">
+                            <button class="btn-share" onclick="shareOnTwitter()">
+                                <i class="fab fa-twitter"></i>
+                            </button>
+                            <button class="btn-share" onclick="shareOnFacebook()">
+                                <i class="fab fa-facebook"></i>
+                            </button>
+                            <button class="btn-share" onclick="shareOnLinkedIn()">
+                                <i class="fab fa-linkedin"></i>
+                            </button>
+                            <button class="btn-share" onclick="copyLink()">
+                                <i class="fas fa-link"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<!-- Modal pour afficher l'image en grand -->
+<div class="image-modal" id="imageModal">
+    <span class="close-modal">&times;</span>
+    <img class="modal-content" id="modalImage">
 </div>
+
+@section Scripts {
+    <script src="~/js/portfolio-details.js"></script>
+}

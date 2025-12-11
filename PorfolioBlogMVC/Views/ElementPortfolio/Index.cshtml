@@ -1,40 +1,165 @@
 @model IEnumerable<PorfolioBlogMVC.Models.ElementPortfolio>
+@using System.Security.Claims
 
 @{
     ViewData["Title"] = "Portfolio";
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isAdmin = User.IsInRole("Admin");
 }
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/Portfolio.css"/>
-}
+<link rel="stylesheet" href="~/css/portfolio.css"/>
 
-<div class="portfolio-container">
-    <h1 class="portfolio-title">Mon Portfolio</h1>
-    <p class="portfolio-intro">
-        <a asp-action="Create" class="btn-create">Créer Nouveau</a>
-    </p>
-    <div class="portfolio-grid">
-        @foreach (var item in Model)
-        {
-            <div class="portfolio-card">
-                @* @if (!string.IsNullOrEmpty(item.ImageUrl)) // Suppose une propriété ImageUrl dans le modèle *@
-                @* { *@
-                @*     <img src="@item.ImageUrl" alt="@item.Titre" class="card-image" /> *@
-                @* } *@
-                <div class="card-content">
-                    <h3 class="card-title">@Html.DisplayFor(modelItem => item.Titre)</h3>
-                    <p class="card-description">@Html.DisplayFor(modelItem => item.Description)</p>
-                    <div class="card-meta">
-                        <span>Créé le : @Html.DisplayFor(modelItem => item.DateCreation)</span>
-                        <span>Par : @Html.DisplayFor(modelItem => item.Createur.Id)</span>
-                    </div>
-                    <div class="card-actions">
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-edit">Modifier</a>
-                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-details">Détails</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn-delete">Supprimer</a>
-                    </div>
-                </div>
-            </div>
-        }
+<div class="portfolio-hero">
+    <div class="container">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <i class="fas fa-briefcase"></i> Mon Portfolio
+            </h1>
+            <p class="hero-subtitle">Découvrez mes réalisations et projets créatifs</p>
+        </div>
     </div>
 </div>
+
+<div class="container portfolio-container">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">
+                <i class="fas fa-folder-open"></i>
+            </div>
+            <h2>Aucun projet pour le moment</h2>
+            <p>Commencez par créer votre premier projet portfolio</p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-action="Create" class="btn-create">
+                    <i class="fas fa-plus"></i> Créer un projet
+                </a>
+            }
+        </div>
+    }
+    else
+    {
+        <!-- Filtres et recherche -->
+        <div class="portfolio-filters">
+            <div class="filter-group">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-th"></i> Tous (@Model.Count())
+                </button>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button class="filter-btn" data-filter="mine">
+                        <i class="fas fa-user"></i> Mes projets (@Model.Count(e => e.CreateurId == currentUserId))
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Grille de portfolio -->
+        <div class="portfolio-grid" id="portfolioGrid">
+            @foreach (var item in Model)
+            {
+                var isOwner = currentUserId == item.CreateurId;
+                var canEdit = isOwner || isAdmin;
+                var imagePrincipale = item.Images.FirstOrDefault(i => i.EstImagePrincipale) ?? item.Images.FirstOrDefault();
+
+                <div class="portfolio-card @(isOwner ? "owner-card" : "")" data-owner="@(isOwner ? "mine" : "other")">
+                    <div class="card-image-container">
+                        @if (imagePrincipale != null)
+                        {
+                            <img src="@imagePrincipale.Url" alt="@item.Titre" class="card-image"/>
+                            @if (item.Images.Count > 1)
+                            {
+                                <div class="image-count">
+                                    <i class="fas fa-images"></i> @item.Images.Count
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="card-image-placeholder">
+                                <i class="fas fa-image"></i>
+                                <span>Aucune image</span>
+                            </div>
+                        }
+
+                        @if (isOwner)
+                        {
+                            <div class="owner-badge">
+                                <i class="fas fa-crown"></i> Votre projet
+                            </div>
+                        }
+
+                        <div class="card-overlay">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-overlay">
+                                <i class="fas fa-eye"></i> Voir le projet
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <h3 class="card-title">@item.Titre</h3>
+
+                        <p class="card-description">
+                            @if (item.Description.Length > 120)
+                            {
+                                @item.Description.Substring(0, 120)<text>...</text>
+                            }
+                            else
+                            {
+                                @item.Description
+                            }
+                        </p>
+
+                        @if (item.Tags.Any())
+                        {
+                            <div class="card-tags">
+                                @foreach (var tag in item.Tags.Take(3))
+                                {
+                                    <span class="tag"
+                                          style="@(!string.IsNullOrEmpty(tag.Couleur) ? $"background-color: {tag.Couleur}; color: #fff;" : "")">
+                                        @tag.Nom
+                                    </span>
+                                }
+                                @if (item.Tags.Count > 3)
+                                {
+                                    <span class="tag tag-more">+@(item.Tags.Count - 3)</span>
+                                }
+                            </div>
+                        }
+
+                        <div class="card-meta">
+                            <div class="meta-info">
+                                <i class="fas fa-calendar"></i>
+                                <span>@item.DateCreation.ToString("dd MMM yyyy")</span>
+                            </div>
+                            <div class="meta-info">
+                                <i class="fas fa-user"></i>
+                                <span>@item.Createur.UserName</span>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn-action btn-details">
+                                <i class="fas fa-eye"></i> Détails
+                            </a>
+
+                            @if (canEdit)
+                            {
+                                <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action btn-edit">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action btn-delete">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="~/js/portfolio.js"></script>
+}

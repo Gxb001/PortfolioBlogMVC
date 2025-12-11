@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
+using System.Security.Claims;
 
 namespace PorfolioBlogMVC.Controllers;
 
@@ -22,82 +19,201 @@ public class ElementPortfolioController : Controller
     // GET: ElementPortfolio
     public async Task<IActionResult> Index()
     {
-        var applicationDbContext = _context.ElementsPortfolio.Include(e => e.Createur);
-        return View(await applicationDbContext.ToListAsync());
+        var elements = await _context.ElementsPortfolio
+            .Include(e => e.Createur)
+            .Include(e => e.Images)
+            .Include(e => e.Tags)
+            .OrderByDescending(e => e.DateCreation)
+            .ToListAsync();
+
+        return View(elements);
     }
 
     // GET: ElementPortfolio/Details/5
     public async Task<IActionResult> Details(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+            return NotFound();
 
-        var elementPortfolio = await _context.ElementsPortfolio
+        var element = await _context.ElementsPortfolio
             .Include(e => e.Createur)
+            .Include(e => e.Images)
+            .Include(e => e.Tags)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (elementPortfolio == null) return NotFound();
 
-        return View(elementPortfolio);
+        if (element == null)
+            return NotFound();
+
+        return View(element);
     }
 
     // GET: ElementPortfolio/Create
+    [Authorize]
     public IActionResult Create()
     {
-        ViewData["CreateurId"] = new SelectList(_context.Users, "Id", "Id");
+        ViewBag.Tags = _context.Tags.ToList();
         return View();
     }
 
     // POST: ElementPortfolio/Create
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
+    [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
-        [Bind("Id,Titre,Description,DateCreation,CreateurId")]
-        ElementPortfolio elementPortfolio)
+        [Bind("Titre,Description")] ElementPortfolio element,
+        string imageUrls,
+        int[] selectedTags)
     {
+        // Retirer les erreurs de validation pour les propriétés de navigation
+        ModelState.Remove("Createur");
+        ModelState.Remove("Images");
+        ModelState.Remove("Tags");
+
         if (ModelState.IsValid)
         {
-            _context.Add(elementPortfolio);
+            // Assigner l'utilisateur connecté
+            element.CreateurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            element.DateCreation = DateTime.UtcNow;
+
+            _context.Add(element);
+            await _context.SaveChangesAsync();
+
+            // Ajouter les images
+            if (!string.IsNullOrWhiteSpace(imageUrls))
+            {
+                var urls = imageUrls.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                for (var i = 0; i < urls.Length; i++)
+                {
+                    var url = urls[i].Trim();
+                    if (!string.IsNullOrWhiteSpace(url))
+                    {
+                        var image = new PortfolioImage
+                        {
+                            Url = url,
+                            ElementPortfolioId = element.Id,
+                            EstImagePrincipale = i == 0 // Première image = principale
+                        };
+                        _context.PortfolioImages.Add(image);
+                    }
+                }
+            }
+
+            // Ajouter les tags
+            if (selectedTags != null && selectedTags.Length > 0)
+            {
+                var tags = await _context.Tags.Where(t => selectedTags.Contains(t.Id)).ToListAsync();
+                element.Tags = tags;
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CreateurId"] = new SelectList(_context.Users, "Id", "Id", elementPortfolio.CreateurId);
-        return View(elementPortfolio);
+        ViewBag.Tags = _context.Tags.ToList();
+        return View(element);
     }
 
     // GET: ElementPortfolio/Edit/5
+    [Authorize]
     public async Task<IActionResult> Edit(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+            return NotFound();
 
-        var elementPortfolio = await _context.ElementsPortfolio.FindAsync(id);
-        if (elementPortfolio == null) return NotFound();
-        ViewData["CreateurId"] = new SelectList(_context.Users, "Id", "Id", elementPortfolio.CreateurId);
-        return View(elementPortfolio);
+        var element = await _context.ElementsPortfolio
+            .Include(e => e.Images)
+            .Include(e => e.Tags)
+            .FirstOrDefaultAsync(e => e.Id == id);
+
+        if (element == null)
+            return NotFound();
+
+        // Vérifier les permissions
+        if (element.CreateurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+
+        ViewBag.Tags = _context.Tags.ToList();
+        ViewBag.SelectedTags = element.Tags.Select(t => t.Id).ToArray();
+        return View(element);
     }
 
     // POST: ElementPortfolio/Edit/5
-    // To protect from overposting attacks, enable the specific properties you want to bind to.
-    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
+    [Authorize]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int id,
-        [Bind("Id,Titre,Description,DateCreation,CreateurId")]
-        ElementPortfolio elementPortfolio)
+    public async Task<IActionResult> Edit(
+        int id,
+        [Bind("Id,Titre,Description,CreateurId,DateCreation")]
+        ElementPortfolio element,
+        string imageUrls,
+        int[] selectedTags)
     {
-        if (id != elementPortfolio.Id) return NotFound();
+        if (id != element.Id)
+            return NotFound();
+
+        // Vérifier les permissions
+        var existingElement = await _context.ElementsPortfolio.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id);
+        if (existingElement == null)
+            return NotFound();
+
+        if (existingElement.CreateurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+
+        // Retirer les erreurs de validation pour les propriétés de navigation
+        ModelState.Remove("Createur");
+        ModelState.Remove("Images");
+        ModelState.Remove("Tags");
 
         if (ModelState.IsValid)
         {
             try
             {
-                _context.Update(elementPortfolio);
+                // Conserver les valeurs originales
+                element.CreateurId = existingElement.CreateurId;
+                element.DateCreation = existingElement.DateCreation;
+
+                _context.Update(element);
+
+                // Gérer les images
+                var oldImages = await _context.PortfolioImages.Where(i => i.ElementPortfolioId == id).ToListAsync();
+                _context.PortfolioImages.RemoveRange(oldImages);
+
+                if (!string.IsNullOrWhiteSpace(imageUrls))
+                {
+                    var urls = imageUrls.Split(new[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (var i = 0; i < urls.Length; i++)
+                    {
+                        var url = urls[i].Trim();
+                        if (!string.IsNullOrWhiteSpace(url))
+                        {
+                            var image = new PortfolioImage
+                            {
+                                Url = url,
+                                ElementPortfolioId = element.Id,
+                                EstImagePrincipale = i == 0
+                            };
+                            _context.PortfolioImages.Add(image);
+                        }
+                    }
+                }
+
+                // Gérer les tags
+                var elementToUpdate = await _context.ElementsPortfolio
+                    .Include(e => e.Tags)
+                    .FirstAsync(e => e.Id == id);
+
+                elementToUpdate.Tags.Clear();
+                if (selectedTags != null && selectedTags.Length > 0)
+                {
+                    var tags = await _context.Tags.Where(t => selectedTags.Contains(t.Id)).ToListAsync();
+                    foreach (var tag in tags) elementToUpdate.Tags.Add(tag);
+                }
+
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ElementPortfolioExists(elementPortfolio.Id))
+                if (!ElementPortfolioExists(element.Id))
                     return NotFound();
                 else
                     throw;
@@ -106,33 +222,55 @@ public class ElementPortfolioController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        ViewData["CreateurId"] = new SelectList(_context.Users, "Id", "Id", elementPortfolio.CreateurId);
-        return View(elementPortfolio);
+        ViewBag.Tags = _context.Tags.ToList();
+        ViewBag.SelectedTags = selectedTags;
+        return View(element);
     }
 
     // GET: ElementPortfolio/Delete/5
+    [Authorize]
     public async Task<IActionResult> Delete(int? id)
     {
-        if (id == null) return NotFound();
+        if (id == null)
+            return NotFound();
 
-        var elementPortfolio = await _context.ElementsPortfolio
+        var element = await _context.ElementsPortfolio
             .Include(e => e.Createur)
+            .Include(e => e.Images)
+            .Include(e => e.Tags)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (elementPortfolio == null) return NotFound();
 
-        return View(elementPortfolio);
+        if (element == null)
+            return NotFound();
+
+        // Vérifier les permissions
+        if (element.CreateurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+
+        return View(element);
     }
 
     // POST: ElementPortfolio/Delete/5
     [HttpPost]
     [ActionName("Delete")]
+    [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var elementPortfolio = await _context.ElementsPortfolio.FindAsync(id);
-        if (elementPortfolio != null) _context.ElementsPortfolio.Remove(elementPortfolio);
+        var element = await _context.ElementsPortfolio
+            .Include(e => e.Images)
+            .FirstOrDefaultAsync(e => e.Id == id);
 
+        if (element == null)
+            return NotFound();
+
+        // Vérifier les permissions
+        if (element.CreateurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+
+        _context.ElementsPortfolio.Remove(element);
         await _context.SaveChangesAsync();
+
         return RedirectToAction(nameof(Index));
     }
 
