@@ -44,14 +44,14 @@ using (var scope = app.Services.CreateScope())
         // Créer le rôle "Admin" et "Standard" s'ils n'existent pas
         var roles = new[] { "Admin", "Standard" };
         foreach (var role in roles)
-        {
             if (!await roleManager.RoleExistsAsync(role))
                 await roleManager.CreateAsync(new IdentityRole(role));
-        }
 
         // Utilisateur Admin
-        var adminEmail = "admin@example.com";
+        var adminEmail = "admintest@admin.com";
         var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        var logger = services.GetRequiredService<ILogger<Program>>();
+
         if (adminUser == null)
         {
             adminUser = new ApplicationUser
@@ -60,13 +60,50 @@ using (var scope = app.Services.CreateScope())
                 Email = adminEmail,
                 Nom = "Ferrer",
                 Prenom = "Gabriel",
-                EmailConfirmed = true
+                EmailConfirmed = true,
+                LockoutEnabled = false
             };
-            await userManager.CreateAsync(adminUser, "Azerty31!");
+
+            var createResult = await userManager.CreateAsync(adminUser, "Azerty31?");
+            if (!createResult.Succeeded)
+            {
+                var errorMsgs = "";
+                foreach (var err in createResult.Errors) errorMsgs += err.Description + " ; ";
+                logger.LogWarning("Échec création Admin : {Errors}", errorMsgs);
+
+                var existing = await userManager.FindByEmailAsync(adminEmail);
+                if (existing != null)
+                {
+                    adminUser = existing;
+                    if (!await userManager.HasPasswordAsync(adminUser))
+                    {
+                        var pwdResult = await userManager.AddPasswordAsync(adminUser, "Azerty31?");
+                        if (!pwdResult.Succeeded)
+                        {
+                            var pwdErr = "";
+                            foreach (var pe in pwdResult.Errors) pwdErr += pe.Description + " ; ";
+                            logger.LogWarning("Échec ajout mot de passe Admin : {Errors}", pwdErr);
+                        }
+                    }
+                }
+            }
         }
+        else
+        {
+            adminUser.EmailConfirmed = true;
+            adminUser.LockoutEnabled = false;
+            await userManager.UpdateAsync(adminUser);
+        }
+
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
-            await userManager.AddToRoleAsync(adminUser, "Admin");
+            var roleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
+            if (!roleResult.Succeeded)
+            {
+                var roleErr = "";
+                foreach (var re in roleResult.Errors) roleErr += re.Description + " ; ";
+                logger.LogWarning("Échec ajout rôle Admin : {Errors}", roleErr);
+            }
         }
 
         // Utilisateur Standard
@@ -87,9 +124,7 @@ using (var scope = app.Services.CreateScope())
 
         // Ajouter le rôle Standard si nécessaire
         if (!await userManager.IsInRoleAsync(standardUser, "Standard"))
-        {
             await userManager.AddToRoleAsync(standardUser, "Standard");
-        }
 
 
         await context.SaveChangesAsync();
@@ -107,7 +142,7 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-    
+
     if (!context.Tags.Any())
     {
         context.Tags.AddRange(
@@ -152,8 +187,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 

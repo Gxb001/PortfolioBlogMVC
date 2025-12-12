@@ -133,8 +133,7 @@ public class ArticleController : Controller
             {
                 if (!ArticleExists(article.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));

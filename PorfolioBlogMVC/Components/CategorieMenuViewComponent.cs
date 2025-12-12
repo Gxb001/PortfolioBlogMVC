@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PorfolioBlogMVC.Data;
-using System.Threading.Tasks;
 
 namespace PorfolioBlogMVC.Components;
 

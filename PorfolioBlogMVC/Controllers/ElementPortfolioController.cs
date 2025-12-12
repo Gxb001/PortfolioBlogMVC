@@ -1,9 +1,9 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
-using System.Security.Claims;
 
 namespace PorfolioBlogMVC.Controllers;
 
@@ -215,8 +215,7 @@ public class ElementPortfolioController : Controller
             {
                 if (!ElementPortfolioExists(element.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));

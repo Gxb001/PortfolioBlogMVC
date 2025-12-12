@@ -1,5 +1,4 @@
-﻿@using PorfolioBlogMVC.Models
-@{
+﻿@{
     ViewData["Title"] = "Accueil - Mon Portfolio & Blog";
     var latestArticles = ViewBag.LatestArticles as List<Article> ?? new List<Article>();
     var latestPortfolios = ViewBag.LatestPortfolios as List<ElementPortfolio> ?? new List<ElementPortfolio>();
@@ -30,11 +29,11 @@
             </div>
             <div class="hero-stats mt-5">
                 <div class="stat-item">
-                    <span class="stat-number">@((ViewBag.TotalArticlesCount ?? latestArticles.Count))</span>
+                    <span class="stat-number">@(ViewBag.TotalArticlesCount ?? latestArticles.Count)</span>
                     <span class="stat-label">Articles</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">@((ViewBag.TotalPortfoliosCount ?? latestPortfolios.Count))</span>
+                    <span class="stat-number">@(ViewBag.TotalPortfoliosCount ?? latestPortfolios.Count)</span>
                     <span class="stat-label">Projets</span>
                 </div>
                 <div class="stat-item">
