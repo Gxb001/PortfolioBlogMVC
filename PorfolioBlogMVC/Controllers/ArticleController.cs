@@ -53,7 +53,8 @@ public class ArticleController : Controller
     public IActionResult Create()
     {
         ViewData["CategorieId"] = new SelectList(_context.Categories, "Id", "Nom");
-        return PartialView("_CreatePartial");
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest") return PartialView("_CreatePartial");
+        return View();
     }
 
     // POST: Article/Create
@@ -75,7 +76,8 @@ public class ArticleController : Controller
         }
 
         ViewData["CategorieId"] = new SelectList(_context.Categories, "Id", "Nom", article.CategorieId);
-        return PartialView("_CreatePartial", article);
+        if (Request.Headers["X-Requested-With"] == "XMLHttpRequest") return PartialView("_CreatePartial", article);
+        return View(article);
     }
 
     // GET: Article/Edit/5

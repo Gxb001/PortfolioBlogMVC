@@ -4,7 +4,7 @@
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/article-create.css" />
+    <link rel="stylesheet" href="~/css/article-create.css"/>
 }
 
 <div class="create-article-page">
@@ -30,7 +30,8 @@
                                 <label asp-for="Titre" class="form-label">
                                     <i class="bi bi-type-h1"></i> Titre de l'article
                                 </label>
-                                <input asp-for="Titre" class="form-control" placeholder="Ex: Comment débuter avec ASP.NET Core"/>
+                                <input asp-for="Titre" class="form-control"
+                                       placeholder="Ex: Comment débuter avec ASP.NET Core"/>
                                 <span asp-validation-for="Titre" class="text-danger"></span>
                             </div>
 
@@ -39,7 +40,8 @@
                                 <label asp-for="Contenu" class="form-label">
                                     <i class="bi bi-text-paragraph"></i> Contenu de l'article
                                 </label>
-                                <textarea asp-for="Contenu" class="form-control" rows="12" placeholder="Rédigez votre article ici..."></textarea>
+                                <textarea asp-for="Contenu" class="form-control" rows="12"
+                                          placeholder="Rédigez votre article ici..."></textarea>
                                 <span asp-validation-for="Contenu" class="text-danger"></span>
                             </div>
 
@@ -72,7 +74,7 @@
                                 <span asp-validation-for="CategorieId" class="text-danger"></span>
                             </div>
 
-                            <hr class="my-4" />
+                            <hr class="my-4"/>
 
                             <div class="d-flex gap-3 flex-wrap">
                                 <button type="submit" class="btn btn-create">
