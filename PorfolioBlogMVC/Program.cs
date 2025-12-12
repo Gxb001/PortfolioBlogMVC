@@ -85,6 +85,38 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+
+// Créer les Categories et Tags 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    
+    if (!context.Tags.Any())
+    {
+        context.Tags.AddRange(
+            new Tag { Nom = "C#", Couleur = "#178600" },
+            new Tag { Nom = "ASP.NET", Couleur = "#512BD4" },
+            new Tag { Nom = "EntityFramework", Couleur = "#3178C6" },
+            new Tag { Nom = "JavaScript", Couleur = "#F7DF1E" },
+            new Tag { Nom = "Design", Couleur = "#FF6F61" }
+        );
+        context.SaveChanges();
+    }
+
+    if (!context.Categories.Any())
+    {
+        context.Categories.AddRange(
+            new CategorieArticle { Nom = "Programmation" },
+            new CategorieArticle { Nom = "Web" },
+            new CategorieArticle { Nom = "Base de données" },
+            new CategorieArticle { Nom = "Design" },
+            new CategorieArticle { Nom = "DevOps" }
+        );
+        context.SaveChanges();
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
