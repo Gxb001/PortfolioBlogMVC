@@ -66,6 +66,7 @@ public class ElementPortfolioController : Controller
     {
         // Retirer les erreurs de validation pour les propriétés de navigation
         ModelState.Remove("Createur");
+        ModelState.Remove("CreateurId");
         ModelState.Remove("Images");
         ModelState.Remove("Tags");
 
@@ -161,6 +162,7 @@ public class ElementPortfolioController : Controller
 
         // Retirer les erreurs de validation pour les propriétés de navigation
         ModelState.Remove("Createur");
+        ModelState.Remove("CreateurId");
         ModelState.Remove("Images");
         ModelState.Remove("Tags");
 

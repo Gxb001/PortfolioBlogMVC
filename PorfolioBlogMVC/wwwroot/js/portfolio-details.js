@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
 function initializeImageModal() {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
-    const closeBtn = document.querySelector('.close-modal');
+    const closeBtn = document.getElementById('modalClose');
     const galleryItems = document.querySelectorAll('.gallery-item');
 
     if (!modal || !modalImg) return;
@@ -34,12 +34,11 @@ function initializeImageModal() {
         closeBtn.addEventListener('click', closeModal);
     }
 
-    // Fermer au clic en dehors de l'image
-    modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-            closeModal();
-        }
-    });
+    // Fermer au clic sur l'overlay
+    const overlay = modal.querySelector('.modal-overlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeModal);
+    }
 
     // Fermer avec la touche Escape
     document.addEventListener('keydown', function (e) {
@@ -214,7 +213,7 @@ const observer = new IntersectionObserver((entries) => {
 }, observerOptions);
 
 // Observer les sections
-document.querySelectorAll('.project-description, .project-gallery, .sidebar-section').forEach(el => {
+document.querySelectorAll('.content-section, .sidebar-card').forEach(el => {
     el.style.opacity = '0';
     observer.observe(el);
 });

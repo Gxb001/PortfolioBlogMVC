@@ -19,7 +19,10 @@
                 </div>
 
                 <form asp-action="Create" method="post" class="portfolio-form">
-                    <div asp-validation-summary="All" class="alert alert-danger"></div>
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div asp-validation-summary="All" class="alert alert-danger"></div>
+                    }
 
                     <div class="form-section">
                         <h4><i class="fas fa-info-circle"></i> Informations du projet</h4>
@@ -112,5 +115,5 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-
+    <script src="~/js/portfolio-form.js"></script>
 }
