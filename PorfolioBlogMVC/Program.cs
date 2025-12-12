@@ -85,7 +85,7 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Créer les Tags par défaut
+// Créer les Tags par défauts
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -99,6 +99,25 @@ using (var scope = app.Services.CreateScope())
             new Tag { Nom = "EntityFramework", Couleur = "#3178C6" },
             new Tag { Nom = "JavaScript", Couleur = "#F7DF1E" },
             new Tag { Nom = "Design", Couleur = "#FF6F61" }
+        );
+        context.SaveChanges();
+    }
+}
+
+// Créer les Categories par défauts
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
+    if (!context.Categories.Any())
+    {
+        context.Categories.AddRange(
+            new CategorieArticle { Nom = "Programmation" },
+            new CategorieArticle { Nom = "Web" },
+            new CategorieArticle { Nom = "Base de données" },
+            new CategorieArticle { Nom = "Design" },
+            new CategorieArticle { Nom = "DevOps" }
         );
         context.SaveChanges();
     }
