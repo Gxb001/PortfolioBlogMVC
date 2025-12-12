@@ -27,6 +27,7 @@ public class RegisterModel : PageModel
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly UserManager<ApplicationUser> _userManager;
+    private readonly RoleManager<IdentityRole> _roleManager;
     private readonly IUserStore<ApplicationUser> _userStore;
     private readonly IUserEmailStore<ApplicationUser> _emailStore;
     private readonly ILogger<RegisterModel> _logger;
@@ -37,7 +38,8 @@ public class RegisterModel : PageModel
         IUserStore<ApplicationUser> userStore,
         SignInManager<ApplicationUser> signInManager,
         ILogger<RegisterModel> logger,
-        IEmailSender emailSender)
+        IEmailSender emailSender,
+        RoleManager<IdentityRole> roleManager)
     {
         _userManager = userManager;
         _userStore = userStore;
@@ -45,6 +47,7 @@ public class RegisterModel : PageModel
         _signInManager = signInManager;
         _logger = logger;
         _emailSender = emailSender;
+        _roleManager = roleManager;
     }
 
     /// <summary>
@@ -124,6 +127,9 @@ public class RegisterModel : PageModel
             if (result.Succeeded)
             {
                 _logger.LogInformation("User created a new account with password.");
+
+                // Assigner automatiquement le rôle "Visiteur" au nouvel utilisateur
+                if (await _roleManager.RoleExistsAsync("Visiteur")) await _userManager.AddToRoleAsync(user, "Visiteur");
 
                 var userId = await _userManager.GetUserIdAsync(user);
                 var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);

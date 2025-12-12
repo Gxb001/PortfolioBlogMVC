@@ -42,17 +42,21 @@ using (var scope = app.Services.CreateScope())
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var context = services.GetRequiredService<ApplicationDbContext>();
 
-        // Créer le rôle "Admin" s'il n'existe pas
-        if (!await roleManager.RoleExistsAsync("Admin")) await roleManager.CreateAsync(new IdentityRole("Admin"));
+        // Créer les rôles "Admin" et "Visiteur" s'ils n'existent pas
+        if (!await roleManager.RoleExistsAsync("Admin"))
+            await roleManager.CreateAsync(new IdentityRole("Admin"));
 
-        // Créer un utilisateur admin
+        if (!await roleManager.RoleExistsAsync("Visiteur"))
+            await roleManager.CreateAsync(new IdentityRole("Visiteur"));
+
+        // Créer un seul utilisateur admin
         var adminUser = new ApplicationUser
         {
-            UserName = "GabAdmin",
+            UserName = "admin@example.com",
             Email = "admin@example.com",
             Nom = "Ferrer",
             Prenom = "Gabriel",
-            EmailConfirmed = true
+            EmailConfirmed = false
         };
         var adminPassword = "Azerty31!";
         var adminUserExists = await userManager.FindByEmailAsync(adminUser.Email);
@@ -62,18 +66,22 @@ using (var scope = app.Services.CreateScope())
             if (createAdmin.Succeeded) await userManager.AddToRoleAsync(adminUser, "Admin");
         }
 
-        // Créer un utilisateur standard (peut écrire des articles)
-        var standardUser = new ApplicationUser
+        // Créer un seul utilisateur visiteur
+        var visiteurUser = new ApplicationUser
         {
-            UserName = "FoucaultStandard",
-            Email = "user@example.com",
-            Nom = "Lapeze",
-            Prenom = "Foucault",
-            EmailConfirmed = true
+            UserName = "visiteur@example.com",
+            Email = "visiteur@example.com",
+            Nom = "Dupont",
+            Prenom = "Jean",
+            EmailConfirmed = false
         };
-        var standardPassword = "Azerty31!";
-        var standardUserExists = await userManager.FindByEmailAsync(standardUser.Email);
-        if (standardUserExists == null) await userManager.CreateAsync(standardUser, standardPassword);
+        var visiteurPassword = "Azerty31!";
+        var visiteurUserExists = await userManager.FindByEmailAsync(visiteurUser.Email);
+        if (visiteurUserExists == null)
+        {
+            var createVisiteur = await userManager.CreateAsync(visiteurUser, visiteurPassword);
+            if (createVisiteur.Succeeded) await userManager.AddToRoleAsync(visiteurUser, "Visiteur");
+        }
 
         await context.SaveChangesAsync();
     }

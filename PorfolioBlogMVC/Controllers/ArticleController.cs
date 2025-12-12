@@ -65,6 +65,9 @@ public class ArticleController : Controller
         [Bind("Id,Titre,Contenu,ImagePrincipale,CategorieId")]
         Article article)
     {
+        // Retirer la validation pour AuteurId car il est assigné côté serveur
+        ModelState.Remove("AuteurId");
+
         if (ModelState.IsValid)
         {
             article.AuteurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
