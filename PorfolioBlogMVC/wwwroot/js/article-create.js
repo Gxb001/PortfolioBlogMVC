@@ -3,7 +3,7 @@
     const preview = document.getElementById('imagePreview');
     const img = document.getElementById('previewImg');
 
-    if (!input) return;
+    if (!input || !preview || !img) return;
 
     input.addEventListener('input', function () {
         const url = this.value;

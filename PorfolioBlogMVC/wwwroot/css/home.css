@@ -29,6 +29,12 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .hero-section {
+        animation: none !important;
+    }
+}
+
 .hero-overlay {
     position: absolute;
     top: 0;
@@ -68,6 +74,12 @@
     }
     50% {
         transform: scale(1.1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-title i {
+        animation: none !important;
     }
 }
 

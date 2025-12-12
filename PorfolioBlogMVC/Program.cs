@@ -85,12 +85,13 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-// Créer les Tags par défauts
+
+// Créer les Categories et Tags 
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<ApplicationDbContext>();
-
+    
     if (!context.Tags.Any())
     {
         context.Tags.AddRange(
@@ -102,13 +103,6 @@ using (var scope = app.Services.CreateScope())
         );
         context.SaveChanges();
     }
-}
-
-// Créer les Categories par défauts
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<ApplicationDbContext>();
 
     if (!context.Categories.Any())
     {

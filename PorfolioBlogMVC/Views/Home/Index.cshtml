@@ -5,7 +5,9 @@
     var latestPortfolios = ViewBag.LatestPortfolios as List<ElementPortfolio> ?? new List<ElementPortfolio>();
 }
 
-<link rel="stylesheet" href="~/css/home.css"/>
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css"/>
+}
 
 <div class="home-container">
     <!-- Section Hero -->
@@ -28,11 +30,11 @@
             </div>
             <div class="hero-stats mt-5">
                 <div class="stat-item">
-                    <span class="stat-number">@latestArticles.Count</span>
+                    <span class="stat-number">@((ViewBag.TotalArticlesCount ?? latestArticles.Count))</span>
                     <span class="stat-label">Articles</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number">@latestPortfolios.Count</span>
+                    <span class="stat-number">@((ViewBag.TotalPortfoliosCount ?? latestPortfolios.Count))</span>
                     <span class="stat-label">Projets</span>
                 </div>
                 <div class="stat-item">
@@ -75,7 +77,7 @@
                         <div class="card-body">
                             <h3 class="card-title">@project.Titre</h3>
                             <p class="card-text">
-                                @if (project.Description.Length > 100)
+                                @if (!string.IsNullOrEmpty(project.Description) && project.Description.Length > 100)
                                 {
                                     @project.Description.Substring(0, 100)<text>...</text>
                                 }
@@ -171,13 +173,13 @@
                                 </a>
                             </h3>
                             <p class="article-excerpt">
-                                @if (article.Contenu.Length > 120)
+                                @if (!string.IsNullOrEmpty(article.Contenu) && article.Contenu.Length > 120)
                                 {
                                     @article.Contenu.Substring(0, 120)<text>...</text>
                                 }
                                 else
                                 {
-                                    @article.Contenu
+                                    @(article.Contenu ?? "")
                                 }
                             </p>
                             <div class="article-footer">
