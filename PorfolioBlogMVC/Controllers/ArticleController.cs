@@ -197,6 +197,9 @@ public class ArticleController : Controller
         if (article == null)
             return NotFound();
 
+        // Vérifier que l'utilisateur est l'auteur de l'article ou un admin
+        if (article.AuteurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
         var auteurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var auteur = await _context.Users.FindAsync(auteurId);
 
@@ -207,9 +210,7 @@ public class ArticleController : Controller
         {
             Contenu = contenu,
             ArticleId = articleId,
-            Article = article,
             AuteurId = auteurId,
-            Auteur = auteur,
             DatePoste = DateTime.UtcNow
         };
 

@@ -112,40 +112,5 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
-    <script>
-        // Script inline pour éviter les erreurs de chargement
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('Form loaded');
 
-            const imageUrlsTextarea = document.getElementById('imageUrls');
-            const imagePreview = document.getElementById('imagePreview');
-            const previewGrid = document.getElementById('previewGrid');
-
-            if (!imageUrlsTextarea) return;
-
-            imageUrlsTextarea.addEventListener('input', function () {
-                const urls = this.value.split('\n').filter(url => url.trim() !== '');
-
-                if (urls.length > 0) {
-                    imagePreview.style.display = 'block';
-                    previewGrid.innerHTML = '';
-
-                    urls.forEach((url, index) => {
-                        const cleanUrl = url.trim();
-                        if (cleanUrl) {
-                            const previewItem = document.createElement('div');
-                            previewItem.className = 'preview-item';
-                            previewItem.innerHTML = `
-                                <img src="${cleanUrl}" alt="Image ${index + 1}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 200 200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2216%22%3EErreur%3C/text%3E%3C/svg%3E'">
-                                ${index === 0 ? '<div class="preview-badge"><i class="fas fa-star"></i> Principale</div>' : ''}
-                            `;
-                            previewGrid.appendChild(previewItem);
-                        }
-                    });
-                } else {
-                    imagePreview.style.display = 'none';
-                }
-            });
-        });
-    </script>
 }
