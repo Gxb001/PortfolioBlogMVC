@@ -11,59 +11,63 @@
 
 <link rel="stylesheet" href="~/css/portfolio-details.css"/>
 
-<div class="portfolio-details-container">
-    <!-- Header avec image de couverture -->
-    <div class="project-header">
+<div class="portfolio-details-page">
+    <!-- Hero Section -->
+    <section class="hero-section">
         @if (Model.Images.Any())
         {
             var mainImage = Model.Images.FirstOrDefault(i => i.EstImagePrincipale) ?? Model.Images.First();
-            <div class="header-image" style="background-image: url('@mainImage.Url');"></div>
+            <div class="hero-background" style="background-image: url('@mainImage.Url');"></div>
         }
-        <div class="header-overlay">
+        <div class="hero-overlay">
             <div class="container">
-                <a asp-action="Index" class="btn-back">
-                    <i class="fas fa-arrow-left"></i> Retour au portfolio
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenu principal -->
-    <div class="container project-content">
-        <div class="row">
-            <!-- Colonne principale -->
-            <div class="col-lg-8">
-                <div class="project-info">
-                    @if (canEdit)
-                    {
-                        <div class="owner-alert">
-                            <i class="fas fa-crown"></i> Votre projet
-                        </div>
-                    }
-
+                <div class="hero-content">
+                    <a asp-action="Index" class="back-link">
+                        <i class="fas fa-arrow-left"></i> Retour au portfolio
+                    </a>
                     <h1 class="project-title">@Model.Titre</h1>
-
                     <div class="project-meta">
-                        <div class="meta-item">
-                            <i class="fas fa-calendar"></i>
-                            <span>Créé le @Model.DateCreation.ToString("dd MMMM yyyy")</span>
-                        </div>
-                        <div class="meta-item">
-                            <i class="fas fa-user"></i>
-                            <span>Par @Model.Createur.UserName</span>
-                        </div>
-                        @if (Model.Images.Any())
+                        <span class="meta-item">
+                            <i class="fas fa-user"></i> @Model.Createur.UserName
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-calendar"></i> @Model.DateCreation.ToString("dd MMM yyyy")
+                        </span>
+                        @if (Model.Tags.Any())
                         {
-                            <div class="meta-item">
-                                <i class="fas fa-images"></i>
-                                <span>@Model.Images.Count image(s)</span>
-                            </div>
+                            <span class="meta-item">
+                                <i class="fas fa-tags"></i> @Model.Tags.Count tags
+                            </span>
                         }
                     </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    @if (Model.Tags.Any())
-                    {
-                        <div class="project-tags">
+    <!-- Main Content -->
+    <div class="container main-content">
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="content-main">
+                <!-- Description -->
+                <section class="content-section">
+                    <h2 class="section-title">
+                        <i class="fas fa-info-circle"></i> À propos du projet
+                    </h2>
+                    <div class="project-description">
+                        @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+                    </div>
+                </section>
+
+                <!-- Tags -->
+                @if (Model.Tags.Any())
+                {
+                    <section class="content-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-tags"></i> Technologies & Compétences
+                        </h2>
+                        <div class="tags-grid">
                             @foreach (var tag in Model.Tags)
                             {
                                 <span class="tag"
@@ -72,98 +76,97 @@
                                 </span>
                             }
                         </div>
-                    }
+                    </section>
+                }
 
-                    <div class="project-description">
-                        <h3><i class="fas fa-align-left"></i> Description</h3>
-                        <div class="description-content">
-                            @Html.Raw(Model.Description.Replace("\n", "<br/>"))
+                @if (Model.Images.Any())
+                {
+                    <section class="content-section">
+                        <h2 class="section-title">
+                            <i class="fas fa-images"></i> Galerie
+                            (@Model.Images.Count image@(Model.Images.Count > 1 ? "s" : ""))
+                        </h2>
+                        <div class="gallery-grid">
+                            @foreach (var image in Model.Images.OrderByDescending(i => i.EstImagePrincipale))
+                            {
+                                <div class="gallery-item" data-image="@image.Url">
+                                    <img src="@image.Url" alt="Image du projet" loading="lazy"/>
+                                    @if (image.EstImagePrincipale)
+                                    {
+                                        <div class="main-badge">
+                                            <i class="fas fa-star"></i> Image principale
+                                        </div>
+                                    }
+                                </div>
+                            }
                         </div>
-                    </div>
-
-                    @if (Model.Images.Any())
-                    {
-                        <div class="project-gallery">
-                            <h3><i class="fas fa-images"></i> Galerie d'images</h3>
-                            <div class="gallery-grid">
-                                @foreach (var image in Model.Images)
-                                {
-                                    <div class="gallery-item" data-image="@image.Url">
-                                        <img src="@image.Url" alt="Image du projet"/>
-                                        @if (image.EstImagePrincipale)
-                                        {
-                                            <div class="main-badge">
-                                                <i class="fas fa-star"></i> Principale
-                                            </div>
-                                        }
-                                    </div>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
+                    </section>
+                }
             </div>
 
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <div class="project-sidebar">
-                    @if (canEdit)
-                    {
-                        <div class="sidebar-section">
-                            <h4><i class="fas fa-cog"></i> Actions</h4>
-                            <div class="action-buttons">
-                                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-block">
-                                    <i class="fas fa-edit"></i> Modifier
-                                </a>
-                                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-block">
-                                    <i class="fas fa-trash"></i> Supprimer
-                                </a>
-                            </div>
+            <div class="content-sidebar">
+                @if (canEdit)
+                {
+                    <div class="sidebar-card">
+                        <h3 class="card-title">
+                            <i class="fas fa-cog"></i> Gestion du projet
+                        </h3>
+                        <div class="card-actions">
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
                         </div>
-                    }
-
-                    <div class="sidebar-section">
-                        <h4><i class="fas fa-info-circle"></i> Informations</h4>
-                        <dl class="info-list">
-                            <dt><i class="fas fa-hashtag"></i> ID du projet</dt>
-                            <dd>#@Model.Id</dd>
-
-                            <dt><i class="fas fa-calendar-alt"></i> Date de création</dt>
-                            <dd>@Model.DateCreation.ToString("dd/MM/yyyy à HH:mm")</dd>
-
-                            <dt><i class="fas fa-user-circle"></i> Créateur</dt>
-                            <dd>@Model.Createur.UserName</dd>
-
-                            @if (Model.Images.Any())
-                            {
-                                <dt><i class="fas fa-image"></i> Nombre d'images</dt>
-                                <dd>@Model.Images.Count</dd>
-                            }
-
-                            @if (Model.Tags.Any())
-                            {
-                                <dt><i class="fas fa-tags"></i> Tags</dt>
-                                <dd>@Model.Tags.Count</dd>
-                            }
-                        </dl>
                     </div>
+                }
 
-                    <div class="sidebar-section">
-                        <h4><i class="fas fa-share-alt"></i> Partager</h4>
-                        <div class="share-buttons">
-                            <button class="btn-share" onclick="shareOnTwitter()">
-                                <i class="fab fa-twitter"></i>
-                            </button>
-                            <button class="btn-share" onclick="shareOnFacebook()">
-                                <i class="fab fa-facebook"></i>
-                            </button>
-                            <button class="btn-share" onclick="shareOnLinkedIn()">
-                                <i class="fab fa-linkedin"></i>
-                            </button>
-                            <button class="btn-share" onclick="copyLink()">
-                                <i class="fas fa-link"></i>
-                            </button>
+                <div class="sidebar-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-info-circle"></i> Informations
+                    </h3>
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span class="info-label">ID du projet</span>
+                            <span class="info-value">#@Model.Id</span>
                         </div>
+                        <div class="info-item">
+                            <span class="info-label">Créé le</span>
+                            <span class="info-value">@Model.DateCreation.ToString("dd/MM/yyyy à HH:mm")</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Créateur</span>
+                            <span class="info-value">@Model.Createur.UserName</span>
+                        </div>
+                        @if (Model.Images.Any())
+                        {
+                            <div class="info-item">
+                                <span class="info-label">Images</span>
+                                <span class="info-value">@Model.Images.Count</span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="sidebar-card">
+                    <h3 class="card-title">
+                        <i class="fas fa-share-alt"></i> Partager
+                    </h3>
+                    <p class="share-text">Aidez ce projet à être découvert !</p>
+                    <div class="share-buttons">
+                        <button class="share-btn twitter" onclick="shareOnTwitter()" title="Partager sur Twitter">
+                            <i class="fab fa-twitter"></i>
+                        </button>
+                        <button class="share-btn facebook" onclick="shareOnFacebook()" title="Partager sur Facebook">
+                            <i class="fab fa-facebook-f"></i>
+                        </button>
+                        <button class="share-btn linkedin" onclick="shareOnLinkedIn()" title="Partager sur LinkedIn">
+                            <i class="fab fa-linkedin-in"></i>
+                        </button>
+                        <button class="share-btn link" onclick="copyLink()" title="Copier le lien">
+                            <i class="fas fa-link"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -171,10 +174,15 @@
     </div>
 </div>
 
-<!-- Modal pour afficher l'image en grand -->
+<!-- Image Modal -->
 <div class="image-modal" id="imageModal">
-    <span class="close-modal">&times;</span>
-    <img class="modal-content" id="modalImage">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" id="modalClose">
+            <i class="fas fa-times"></i>
+        </button>
+        <img id="modalImage" alt="Image agrandie"/>
+    </div>
 </div>
 
 @section Scripts {

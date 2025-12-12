@@ -9,6 +9,21 @@
 
 <link rel="stylesheet" href="~/css/portfolio.css"/>
 
+@if (User?.Identity?.IsAuthenticated == false)
+{
+    <div class="login-prompt">
+        <div class="container">
+            <div class="login-prompt-content">
+                <h2>Connectez-vous pour créer votre portfolio</h2>
+                <p>Partagez vos projets et réalisez vos créations avec la communauté.</p>
+                <a asp-area="Identity" asp-controller="Account" asp-action="Login" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </a>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="portfolio-hero">
     <div class="container">
         <div class="hero-content">
@@ -162,4 +177,6 @@
 
 @section Scripts {
     <script src="~/js/portfolio.js"></script>
+}
+
 }

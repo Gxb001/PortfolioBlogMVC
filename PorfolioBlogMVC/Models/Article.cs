@@ -16,7 +16,10 @@ public class Article
     public DateTime DatePublication { get; set; } = DateTime.UtcNow;
 
     // Auteur
-    [Required] [ForeignKey(nameof(Auteur))] public string AuteurId { get; set; } = string.Empty;
+    [Required]
+    [ForeignKey(nameof(Auteur))]
+    public string AuteurId { get; set; } = string.Empty;
+
     public ApplicationUser? Auteur { get; set; }
 
     // Catégorie
