@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
@@ -24,7 +19,7 @@ public class CategorieArticleController : Controller
     // GET: CategorieArticle
     public async Task<IActionResult> Index()
     {
-        return View(await _context.Categories.ToListAsync());
+        return View(await _context.Categories.Include(c => c.Articles).ToListAsync());
     }
 
     // GET: CategorieArticle/Details/5
@@ -33,6 +28,7 @@ public class CategorieArticleController : Controller
         if (id == null) return NotFound();
 
         var categorieArticle = await _context.Categories
+            .Include(c => c.Articles)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (categorieArticle == null) return NotFound();
 
@@ -92,8 +88,7 @@ public class CategorieArticleController : Controller
             {
                 if (!CategorieArticleExists(categorieArticle.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));
@@ -108,6 +103,7 @@ public class CategorieArticleController : Controller
         if (id == null) return NotFound();
 
         var categorieArticle = await _context.Categories
+            .Include(c => c.Articles)
             .FirstOrDefaultAsync(m => m.Id == id);
         if (categorieArticle == null) return NotFound();
 

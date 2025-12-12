@@ -1,0 +1,56 @@
+﻿/* Styles personnalisés pour les vues Tag */
+
+.tag-card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border: none;
+    border-radius: 10px;
+}
+
+.tag-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+}
+
+.tag-card .card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.btn-group .btn {
+    flex: 1;
+    margin: 0 1px;
+}
+
+.btn-group .btn:first-child {
+    margin-left: 0;
+}
+
+.btn-group .btn:last-child {
+    margin-right: 0;
+}
+
+/* Animation pour les boutons */
+.btn {
+    transition: all 0.2s ease-in-out;
+}
+
+.btn:hover {
+    transform: scale(1.05);
+}
+
+/* Styles pour les formulaires */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .tag-card .btn-group {
+        flex-direction: column;
+    }
+
+    .tag-card .btn {
+        margin: 1px 0;
+    }
+}

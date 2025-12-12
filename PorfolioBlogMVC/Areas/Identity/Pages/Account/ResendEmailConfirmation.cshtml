@@ -1,0 +1,69 @@
+﻿@page
+@model ResendEmailConfirmationModel
+@{
+    ViewData["Title"] = "Renvoyer l'email de confirmation";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/resendEmail.css"/>
+}
+
+<div class="resend-container">
+    <div class="resend-wrapper">
+        <div class="resend-icon">
+            📧
+        </div>
+
+        <h1 class="resend-title">Renvoyer l'email de confirmation</h1>
+        <p class="resend-subtitle">
+            Vous n'avez pas reçu votre email de confirmation ? Pas de problème, nous pouvons vous en envoyer un nouveau.
+        </p>
+
+        <div class="info-box">
+            <div class="info-box-icon">ℹ️</div>
+            <div class="info-box-content">
+                <div class="info-box-title">Pourquoi confirmer mon email ?</div>
+                <div class="info-box-text">
+                    La confirmation de votre email est nécessaire pour activer votre compte et garantir la sécurité de
+                    vos informations.
+                </div>
+            </div>
+        </div>
+
+        <section>
+            <form method="post">
+                @if (ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div asp-validation-summary="All" class="alert-danger-custom" role="alert"></div>
+                }
+
+                <div class="form-group">
+                    <div class="form-floating-custom">
+                        <input asp-for="Input.Email"
+                               class="form-control-custom"
+                               aria-required="true"
+                               placeholder="nom@exemple.com"
+                               autocomplete="email"/>
+                        <label asp-for="Input.Email" class="form-label-custom">Adresse email</label>
+                        <span asp-validation-for="Input.Email" class="validation-error"></span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary-custom">
+                    Renvoyer l'email de confirmation
+                </button>
+            </form>
+        </section>
+
+        <div class="resend-links">
+            <a asp-page="./Login" class="resend-link">
+                <span class="back-icon">←</span> Retour à la connexion
+            </a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script src="~/js/resendEmail.js"></script>
+}

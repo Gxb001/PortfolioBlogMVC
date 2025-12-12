@@ -1,24 +1,120 @@
-@model PorfolioBlogMVC.Models.CategorieArticle
+@model CategorieArticle
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Détails de la Catégorie";
 }
 
-<h1>Details</h1>
+@section Styles {
+    <link rel="stylesheet" href="~/css/categorieArticle.css" asp-append-version="true"/>
+}
 
-<div>
-    <h4>CategorieArticle</h4>
-    <hr/>
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nom)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nom)
-        </dd>
-    </dl>
+<div class="container-fluid py-4">
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">
+                        <a asp-action="Index">
+                            <i class="bi bi-tags me-1"></i>
+                            Catégories
+                        </a>
+                    </li>
+                    <li class="breadcrumb-item active" aria-current="page">Détails</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-tag-fill me-2"></i>
+                        <h5 class="mb-0">Détails de la Catégorie</h5>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Nom de la Catégorie</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-tag me-2 text-primary"></i>
+                                    <span class="h5 mb-0">@Html.DisplayFor(model => model.Nom)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-muted">Articles Associés</label>
+                                <div class="d-flex align-items-center">
+                                    <i class="bi bi-file-text me-2 text-success"></i>
+                                    <span class="h5 mb-0">
+                                        @if (Model.Articles != null && Model.Articles.Any())
+                                        {
+                                            @Model.Articles.Count
+                                        }
+                                        else
+                                        {
+                                            <span>0</span>
+                                        }
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    @if (Model.Articles != null && Model.Articles.Any())
+                    {
+                        <div class="mt-4">
+                            <h6 class="fw-bold text-muted mb-3">
+                                <i class="bi bi-list-ul me-2"></i>
+                                Articles dans cette catégorie
+                            </h6>
+                            <div class="list-group">
+                                @foreach (var article in Model.Articles)
+                                {
+                                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">@article.Titre</h6>
+                                            <small class="text-muted">
+                                                Publié le @article.DatePublication.ToString("dd/MM/yyyy")
+                                            </small>
+                                        </div>
+                                        <a asp-controller="Article" asp-action="Details" asp-route-id="@article.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Retour à la liste
+                        </a>
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning me-2">
+                                <i class="bi bi-pencil me-1"></i>
+                                Modifier
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">
+                                <i class="bi bi-trash me-1"></i>
+                                Supprimer
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section Scripts {
+    <script src="~/js/categorieArticle.js" asp-append-version="true"></script>
+}

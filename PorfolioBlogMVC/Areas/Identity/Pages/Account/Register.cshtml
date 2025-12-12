@@ -1,0 +1,123 @@
+﻿@page
+@model RegisterModel
+@{
+    ViewData["Title"] = "Inscription";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/registerForm.css"/>
+}
+
+<div class="register-container">
+    <div class="register-wrapper">
+        <!-- Section formulaire d'inscription -->
+        <div class="register-form-section">
+            <h1 class="register-title">Créer un compte</h1>
+            <p class="register-subtitle">Rejoignez-nous dès aujourd'hui</p>
+
+            <section>
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    @if (ViewData.ModelState.ErrorCount > 0)
+                    {
+                        <div asp-validation-summary="ModelOnly" class="alert-danger-custom" role="alert"></div>
+                    }
+
+                    <div class="form-group">
+                        <div class="form-floating-custom">
+                            <input asp-for="Input.Email"
+                                   class="form-control-custom"
+                                   autocomplete="username"
+                                   aria-required="true"
+                                   placeholder="nom@exemple.com"/>
+                            <label asp-for="Input.Email" class="form-label-custom">Email</label>
+                            <span asp-validation-for="Input.Email" class="validation-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-floating-custom">
+                            <input asp-for="Input.Password"
+                                   class="form-control-custom"
+                                   autocomplete="new-password"
+                                   aria-required="true"
+                                   placeholder="mot de passe"/>
+                            <label asp-for="Input.Password" class="form-label-custom">Mot de passe</label>
+                            <span asp-validation-for="Input.Password" class="validation-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="form-floating-custom">
+                            <input asp-for="Input.ConfirmPassword"
+                                   class="form-control-custom"
+                                   autocomplete="new-password"
+                                   aria-required="true"
+                                   placeholder="mot de passe"/>
+                            <label asp-for="Input.ConfirmPassword" class="form-label-custom">Confirmer le mot de
+                                passe</label>
+                            <span asp-validation-for="Input.ConfirmPassword" class="validation-error"></span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <button id="registerSubmit" type="submit" class="btn-primary-custom">S'inscrire</button>
+                    </div>
+
+                    <div class="register-links">
+                        <span>Vous avez déjà un compte ? </span>
+                        <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl" class="register-link">Se
+                            connecter</a>
+                    </div>
+                </form>
+            </section>
+        </div>
+
+        <!-- Section inscription externe -->
+        <div class="register-external-section">
+            <section>
+                <h3 class="external-register-title">Inscription sociale</h3>
+                <p class="external-register-description">
+                    Inscrivez-vous rapidement avec votre plateforme sociale préférée
+                </p>
+
+                @{
+                    if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                    {
+                        <div class="no-external-message">
+                            <p>
+                                Aucun service d'authentification externe n'est configuré. Consultez cet
+                                <a href="https://go.microsoft.com/fwlink/?LinkID=532715" target="_blank">
+                                    article sur la configuration de cette application ASP.NET
+                                </a>
+                                pour prendre en charge l'inscription via des services externes.
+                            </p>
+                        </div>
+                    }
+                    else
+                    {
+                        <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl"
+                              method="post">
+                            <div>
+                                @foreach (var provider in Model.ExternalLogins!)
+                                {
+                                    <button type="submit"
+                                            class="btn-external"
+                                            name="provider"
+                                            value="@provider.Name"
+                                            title="S'inscrire avec votre compte @provider.DisplayName">
+                                        @provider.DisplayName
+                                    </button>
+                                }
+                            </div>
+                        </form>
+                    }
+                }
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+    <script src="~/js/registerForm.js"></script>
+}
