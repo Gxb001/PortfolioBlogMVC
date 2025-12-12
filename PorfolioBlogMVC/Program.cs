@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
+using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,8 +40,7 @@ using (var scope = app.Services.CreateScope())
         var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
         var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
         var context = services.GetRequiredService<ApplicationDbContext>();
-
-        // Créer le rôle "Admin" s'il n'existe pas
+        
         // Créer le rôle "Admin" et "Standard" s'ils n'existent pas
         var roles = new[] { "Admin", "Standard" };
         foreach (var role in roles)

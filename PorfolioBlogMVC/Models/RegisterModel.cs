@@ -1,8 +1,10 @@
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PorfolioBlogMVC.Models;
 
+namespace PorfolioBlogMVC.Models;
 public class RegisterModel : PageModel
 {
     private readonly RoleManager<IdentityRole> _roleManager;
@@ -51,8 +53,16 @@ public class RegisterModel : PageModel
 
     public class InputModel
     {
+        [Microsoft.Build.Framework.Required]
         public string Email { get; set; }
+        
+        [Microsoft.Build.Framework.Required]
+        [DataType(DataType.Password)]
+
         public string Password { get; set; }
+        [Microsoft.Build.Framework.Required]
+        [DataType(DataType.Password)]
+        
         public string ConfirmPassword { get; set; }
     }
 }
