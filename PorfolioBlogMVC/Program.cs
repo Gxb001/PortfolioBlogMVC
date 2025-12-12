@@ -85,6 +85,25 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+// Créer les Tags par défaut
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context =  services.GetRequiredService<ApplicationDbContext>();
+    
+    if (!context.Tags.Any())
+    {
+        context.Tags.AddRange(
+            new Tag { Nom = "C#", Couleur = "#178600" },
+            new Tag { Nom = "ASP.NET", Couleur = "#512BD4" },
+            new Tag { Nom = "EntityFramework", Couleur = "#3178C6" },
+            new Tag { Nom = "JavaScript", Couleur = "#F7DF1E" },
+            new Tag { Nom = "Design", Couleur = "#FF6F61" }
+        );
+        context.SaveChanges();
+    }
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
