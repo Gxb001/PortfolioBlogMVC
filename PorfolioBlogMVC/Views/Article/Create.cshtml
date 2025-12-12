@@ -1,58 +1,90 @@
 @model PorfolioBlogMVC.Models.Article
-
 @{
     ViewData["Title"] = "Créer un article";
 }
 
-<div class="container my-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h2><i class="bi bi-plus-circle"></i> Créer un nouvel article</h2>
-                </div>
-                <div class="card-body">
-                    <form asp-action="Create" method="post">
-                        @Html.AntiForgeryToken()
-                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/article-create.css" />
+}
 
-                        <div class="mb-3">
-                            <label asp-for="Titre" class="form-label">Titre</label>
-                            <input asp-for="Titre" class="form-control" placeholder="Entrez le titre de l'article"/>
-                            <span asp-validation-for="Titre" class="text-danger"></span>
-                        </div>
+<div class="create-article-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-md-10">
+                <div class="card create-card">
+                    <div class="create-card-header">
+                        <h2>
+                            <i class="bi bi-pencil-square"></i>
+                            Créer un nouvel article
+                        </h2>
+                        <p>Partagez vos idées, tutoriels ou actualités avec la communauté</p>
+                    </div>
 
-                        <div class="mb-3">
-                            <label asp-for="Contenu" class="form-label">Contenu</label>
-                            <textarea asp-for="Contenu" class="form-control" rows="10"
-                                      placeholder="Rédigez votre article ici..."></textarea>
-                            <span asp-validation-for="Contenu" class="text-danger"></span>
-                        </div>
+                    <div class="create-card-body">
+                        <form asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-                        <div class="mb-3">
-                            <label asp-for="ImagePrincipale" class="form-label">URL de l'image (optionnel)</label>
-                            <input asp-for="ImagePrincipale" class="form-control"
-                                   placeholder="https://exemple.com/image.jpg"/>
-                            <span asp-validation-for="ImagePrincipale" class="text-danger"></span>
-                        </div>
+                            <!-- Titre -->
+                            <div class="mb-4">
+                                <label asp-for="Titre" class="form-label">
+                                    <i class="bi bi-type-h1"></i> Titre de l'article
+                                </label>
+                                <input asp-for="Titre" class="form-control" placeholder="Ex: Comment débuter avec ASP.NET Core"/>
+                                <span asp-validation-for="Titre" class="text-danger"></span>
+                            </div>
 
-                        <div class="mb-3">
-                            <label asp-for="CategorieId" class="form-label">Catégorie</label>
-                            <select asp-for="CategorieId" class="form-select" asp-items="ViewBag.CategorieId">
-                                <option value="">-- Sélectionnez une catégorie --</option>
-                            </select>
-                            <span asp-validation-for="CategorieId" class="text-danger"></span>
-                        </div>
+                            <!-- Contenu -->
+                            <div class="mb-4">
+                                <label asp-for="Contenu" class="form-label">
+                                    <i class="bi bi-text-paragraph"></i> Contenu de l'article
+                                </label>
+                                <textarea asp-for="Contenu" class="form-control" rows="12" placeholder="Rédigez votre article ici..."></textarea>
+                                <span asp-validation-for="Contenu" class="text-danger"></span>
+                            </div>
 
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary">
-                                <i class="bi bi-check-circle"></i> Créer l'article
-                            </button>
-                            <a asp-action="Index" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Retour à la liste
-                            </a>
-                        </div>
-                    </form>
+                            <!-- Image principale -->
+                            <div class="mb-4">
+                                <label asp-for="ImagePrincipale" class="form-label">
+                                    <i class="bi bi-image"></i> Image principale (optionnel)
+                                </label>
+                                <div class="input-group-icon">
+                                    <i class="bi bi-link-45deg"></i>
+                                    <input asp-for="ImagePrincipale" class="form-control" id="imageUrlInput"
+                                           placeholder="https://exemple.com/mon-image.jpg"/>
+                                </div>
+                                <span asp-validation-for="ImagePrincipale" class="text-danger"></span>
+
+                                <div class="preview-section" id="imagePreview" style="display:none;">
+                                    <p class="mb-2 text-muted small">Aperçu de l'image :</p>
+                                    <img id="previewImg" src="" alt="Aperçu" class="img-fluid"/>
+                                </div>
+                            </div>
+
+                            <!-- Catégorie -->
+                            <div class="mb-4">
+                                <label asp-for="CategorieId" class="form-label">
+                                    <i class="bi bi-tag"></i> Catégorie
+                                </label>
+                                <select asp-for="CategorieId" class="form-select" asp-items="ViewBag.CategorieId">
+                                    <option value="">-- Sélectionnez une catégorie --</option>
+                                </select>
+                                <span asp-validation-for="CategorieId" class="text-danger"></span>
+                            </div>
+
+                            <hr class="my-4" />
+
+                            <div class="d-flex gap-3 flex-wrap">
+                                <button type="submit" class="btn btn-create">
+                                    <i class="bi bi-check-circle-fill"></i> Publier l'article
+                                </button>
+                                <a asp-action="Index" class="btn btn-back">
+                                    <i class="bi bi-arrow-left"></i> Retour à la liste
+                                </a>
+                            </div>
+
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -61,5 +93,5 @@
 
 @section Scripts {
     @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/js/article-create.js"></script>
 }
-
