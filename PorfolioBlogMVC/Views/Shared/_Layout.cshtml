@@ -4,25 +4,33 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Mon Portfolio</title>
+
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
-    <!-- Icônes -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"/>
+
+    @await RenderSectionAsync("Styles", false)
 </head>
 <body>
+<a class="visually-hidden-focusable" href="#mainContent">Aller au contenu</a>
+
 <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm" role="navigation"
+         aria-label="Navigation principale">
         <div class="container">
             <!-- Logo/Brand -->
-            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                <i class="fas fa-code me-2"></i>
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index"
+               aria-label="Accueil - Mon Portfolio">
+                <i class="fas fa-code me-2" aria-hidden="true"></i>
                 <span class="brand-text">Mon<span class="text-primary">Portfolio</span></span>
             </a>
 
             <!-- Bouton mobile -->
-            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
-                <i class="fas fa-bars"></i>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+                    aria-controls="mainNav" aria-expanded="false" aria-label="Basculer la navigation">
+                <i class="fas fa-bars" aria-hidden="true"></i>
             </button>
 
             <!-- Menu principal -->
@@ -30,20 +38,19 @@
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">
-                            <i class="fas fa-home me-1"></i> Accueil
+                            <i class="fas fa-home me-1" aria-hidden="true"></i> Accueil
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="Article" asp-action="Index">
-                            <i class="fas fa-book me-1"></i> Blog
+                            <i class="fas fa-book me-1" aria-hidden="true"></i> Blog
                         </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" asp-controller="ElementPortfolio" asp-action="Index">
-                            <i class="fas fa-briefcase me-1"></i> Portfolio
+                            <i class="fas fa-briefcase me-1" aria-hidden="true"></i> Portfolio
                         </a>
                     </li>
-                    @await Component.InvokeAsync("CategoriesMenu")
                 </ul>
 
                 <!-- Section utilisateur (connexion/déconnexion) -->
@@ -55,7 +62,7 @@
     </nav>
 </header>
 
-<main role="main" class="main-container">
+<main id="mainContent" role="main" class="main-container">
     @RenderBody()
 </main>
 
@@ -70,7 +77,7 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+
 @await RenderSectionAsync("Scripts", false)
-@await RenderSectionAsync("Styles", false)
 </body>
 </html>
