@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
@@ -92,8 +87,7 @@ public class TagController : Controller
             {
                 if (!TagExists(tag.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));

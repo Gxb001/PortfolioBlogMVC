@@ -1,5 +1,5 @@
-@model IEnumerable<PorfolioBlogMVC.Models.ElementPortfolio>
 @using System.Security.Claims
+@model IEnumerable<ElementPortfolio>
 
 @{
     ViewData["Title"] = "Portfolio";
@@ -54,7 +54,6 @@
     }
     else
     {
-        <!-- Filtres et recherche -->
         <div class="portfolio-filters">
             <div class="filter-group">
                 <button class="filter-btn active" data-filter="all">
@@ -67,6 +66,12 @@
                     </button>
                 }
             </div>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <a asp-action="Create" class="btn-create">
+                    <i class="fas fa-plus"></i> Ajouter un projet
+                </a>
+            }
         </div>
 
         <!-- Grille de portfolio -->

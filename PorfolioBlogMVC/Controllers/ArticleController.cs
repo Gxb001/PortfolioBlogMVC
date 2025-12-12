@@ -65,6 +65,9 @@ public class ArticleController : Controller
         [Bind("Id,Titre,Contenu,ImagePrincipale,CategorieId")]
         Article article)
     {
+        // Retirer la validation pour AuteurId car il est assigné côté serveur
+        ModelState.Remove("AuteurId");
+
         if (ModelState.IsValid)
         {
             article.AuteurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -133,8 +136,7 @@ public class ArticleController : Controller
             {
                 if (!ArticleExists(article.Id))
                     return NotFound();
-                else
-                    throw;
+                throw;
             }
 
             return RedirectToAction(nameof(Index));

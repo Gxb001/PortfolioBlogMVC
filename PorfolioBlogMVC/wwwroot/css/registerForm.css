@@ -1,0 +1,450 @@
+﻿:root {
+    --primary-color: #10b981;
+    --primary-hover: #059669;
+    --secondary-color: #34d399;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --error-color: #ef4444;
+    --success-color: #10b981;
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    padding: 2rem 1rem;
+}
+
+.register-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    background: var(--surface);
+    border-radius: 1rem;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.register-form-section {
+    padding: 3rem;
+}
+
+.register-external-section {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    padding: 3rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.register-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.register-subtitle {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.form-floating-custom {
+    position: relative;
+}
+
+.form-control-custom {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--surface);
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.form-control-custom:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.form-control-custom.error {
+    border-color: var(--error-color);
+}
+
+.form-control-custom.success {
+    border-color: var(--success-color);
+}
+
+.form-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    pointer-events: none;
+    transition: color 0.3s ease;
+    z-index: 1;
+}
+
+.form-control-custom:focus + .form-icon {
+    color: var(--primary-color);
+}
+
+.form-label-custom {
+    position: absolute;
+    left: 3rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: var(--surface);
+    padding: 0 0.25rem;
+    z-index: 1;
+}
+
+.form-control-custom:focus ~ .form-label-custom,
+.form-control-custom:not(:placeholder-shown) ~ .form-label-custom {
+    top: 0;
+    left: 2.5rem;
+    font-size: 0.75rem;
+    color: var(--primary-color);
+}
+
+.validation-error {
+    color: var(--error-color);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.password-strength {
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.strength-bar {
+    height: 4px;
+    background: var(--border-color);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 0.25rem;
+}
+
+.strength-bar-fill {
+    height: 100%;
+    background: var(--error-color);
+    transition: all 0.3s ease;
+    width: 0%;
+}
+
+.strength-bar-fill.weak {
+    width: 33%;
+    background: var(--error-color);
+}
+
+.strength-bar-fill.medium {
+    width: 66%;
+    background: #f59e0b;
+}
+
+.strength-bar-fill.strong {
+    width: 100%;
+    background: var(--success-color);
+}
+
+.strength-text {
+    margin-top: 0.25rem;
+    font-size: 0.75rem;
+}
+
+.strength-text.weak {
+    color: var(--error-color);
+}
+
+.strength-text.medium {
+    color: #f59e0b;
+}
+
+.strength-text.strong {
+    color: var(--success-color);
+}
+
+.password-requirements {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.requirement {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.requirement-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.requirement.met {
+    color: var(--success-color);
+}
+
+.requirement.met .requirement-icon::before {
+    content: '✓';
+}
+
+.requirement:not(.met) .requirement-icon::before {
+    content: '○';
+    color: var(--text-secondary);
+}
+
+.btn-primary-custom {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-primary-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-primary-custom:active {
+    transform: translateY(0);
+}
+
+.btn-primary-custom:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.register-links {
+    margin-top: 1.5rem;
+    text-align: center;
+}
+
+.register-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: color 0.3s ease;
+}
+
+.register-link:hover {
+    color: var(--primary-hover);
+    text-decoration: underline;
+}
+
+.external-register-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: white;
+}
+
+.external-register-description {
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.btn-external {
+    width: 100%;
+    padding: 0.875rem;
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.btn-external:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-2px);
+}
+
+.no-external-message {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+}
+
+.no-external-message a {
+    color: white;
+    text-decoration: underline;
+}
+
+.alert-danger-custom {
+    background: #fee2e2;
+    color: #991b1b;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-left: 4px solid var(--error-color);
+}
+
+.password-match-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.password-match-indicator.match {
+    color: var(--success-color);
+}
+
+.password-match-indicator.no-match {
+    color: var(--error-color);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.register-wrapper {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+.form-control-custom.shake {
+    animation: shake 0.3s ease;
+}
+
+.btn-primary-custom.loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-primary-custom.loading::after {
+    content: '';
+    position: absolute;
+    width: 1.25rem;
+    height: 1.25rem;
+    top: 50%;
+    left: 50%;
+    margin-left: -0.625rem;
+    margin-top: -0.625rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .register-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 450px;
+    }
+
+    .register-external-section {
+        order: 2;
+    }
+
+    .register-form-section,
+    .register-external-section {
+        padding: 2rem;
+    }
+
+    .register-title {
+        font-size: 1.5rem;
+    }
+}
+
+.password-toggle {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.3s ease;
+    z-index: 2;
+}
+
+.password-toggle:hover {
+    color: var(--primary-color);
+}
+
+.success-checkmark {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--success-color);
+    font-size: 1.25rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.success-checkmark.show {
+    opacity: 1;
+}
