@@ -85,7 +85,7 @@
 
                         <div class="article-meta">
                             <span><i class="bi bi-calendar"></i> @item.DatePublication.ToString("dd/MM/yyyy")</span>
-                            <span><i class="bi bi-person"></i> @item.Auteur.UserName</span>
+                            <span><i class="bi bi-person"></i> @(item.Auteur?.UserName ?? "Anonyme")</span>
                             @if (item.Categorie != null)
                             {
                                 <span><i class="bi bi-tag"></i> @item.Categorie.Nom</span>

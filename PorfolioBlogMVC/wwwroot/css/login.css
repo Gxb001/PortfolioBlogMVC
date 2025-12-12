@@ -75,6 +75,7 @@
     background-color: rgba(110, 142, 251, 0.08);
     color: #6e8efb;
 }
+
 .user-dropdown .dropdown-item.text-danger:hover,
 .user-dropdown .dropdown-item.text-danger:focus {
     background-color: rgba(220, 53, 69, 0.08);
@@ -85,6 +86,7 @@
     margin: 0;
     padding: 0;
 }
+
 .dropdown-item-form button {
     width: 100%;
     text-align: left;
@@ -115,10 +117,12 @@
         width: 100%;
         justify-content: flex-end;
     }
+
     .user-section .btn {
         margin: 0.25rem 0;
         width: auto;
     }
+
     .user-name {
         max-width: 90px;
     }

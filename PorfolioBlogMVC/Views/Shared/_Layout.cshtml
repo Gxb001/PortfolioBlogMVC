@@ -1,14 +1,14 @@
 ﻿<!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - Mon Portfolio</title>
 
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/header.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
     @await RenderSectionAsync("Styles", false)
 </head>
@@ -16,10 +16,12 @@
 <a class="visually-hidden-focusable" href="#mainContent">Aller au contenu</a>
 
 <header class="site-header">
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm" role="navigation" aria-label="Navigation principale">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm" role="navigation"
+         aria-label="Navigation principale">
         <div class="container">
             <!-- Logo/Brand -->
-            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index" aria-label="Accueil - Mon Portfolio">
+            <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index"
+               aria-label="Accueil - Mon Portfolio">
                 <i class="fas fa-code me-2" aria-hidden="true"></i>
                 <span class="brand-text">Mon<span class="text-primary">Portfolio</span></span>
             </a>
@@ -52,7 +54,7 @@
 
                 <!-- Section utilisateur (connexion/déconnexion) -->
                 <div class="navbar-nav">
-                    <partial name="_LoginPartial" />
+                    <partial name="_LoginPartial"/>
                 </div>
             </div>
         </div>
@@ -65,7 +67,9 @@
 
 <footer class="site-footer border-top py-4 mt-5">
     <div class="container text-center">
-        <p class="mb-0">&copy; @DateTime.Now.Year - Mon Portfolio | <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-muted">Confidentialité</a></p>
+        <p class="mb-0">&copy; @DateTime.Now.Year - Mon Portfolio | <a asp-area="" asp-controller="Home"
+                                                                       asp-action="Privacy" class="text-muted">Confidentialité</a>
+        </p>
     </div>
 </footer>
 

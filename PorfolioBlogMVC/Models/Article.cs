@@ -7,17 +7,17 @@ public class Article
 {
     [Key] public int Id { get; set; }
 
-    [Required] [StringLength(200)] public required string Titre { get; set; }
+    [Required] [StringLength(200)] public string Titre { get; set; } = string.Empty;
 
-    [Required] public required string Contenu { get; set; }
+    [Required] public string Contenu { get; set; } = string.Empty;
 
     public string? ImagePrincipale { get; set; }
 
     public DateTime DatePublication { get; set; } = DateTime.UtcNow;
 
     // Auteur
-    [ForeignKey(nameof(Auteur))] public required string AuteurId { get; set; }
-    public required ApplicationUser Auteur { get; set; }
+    [ForeignKey(nameof(Auteur))] public string? AuteurId { get; set; }
+    public ApplicationUser? Auteur { get; set; }
 
     // Catégorie
     public int? CategorieId { get; set; }

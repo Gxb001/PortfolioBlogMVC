@@ -89,8 +89,8 @@ using (var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    var context =  services.GetRequiredService<ApplicationDbContext>();
-    
+    var context = services.GetRequiredService<ApplicationDbContext>();
+
     if (!context.Tags.Any())
     {
         context.Tags.AddRange(

@@ -17,7 +17,7 @@
             <h1>@Model.Titre</h1>
             <div class="article-meta">
                 <span><i class="bi bi-calendar"></i> @Model.DatePublication.ToString("dd MMMM yyyy")</span>
-                <span><i class="bi bi-person"></i> @Model.Auteur.UserName</span>
+                <span><i class="bi bi-person"></i> @(Model.Auteur?.UserName ?? "Anonyme")</span>
                 @if (Model.Categorie != null)
                 {
                     <span><i class="bi bi-tag"></i> @Model.Categorie.Nom</span>
@@ -94,7 +94,7 @@
                             <div class="comment-header">
                                 <div class="comment-author">
                                     <i class="bi bi-person-circle"></i>
-                                    <strong>@commentaire.Auteur.UserName</strong>
+                                    <strong>@(commentaire.Auteur?.UserName ?? "Anonyme")</strong>
                                 </div>
                                 <div class="comment-meta">
                                     <span class="comment-date">
