@@ -4,8 +4,6 @@ namespace PorfolioBlogMVC.Models;
 
 public class ApplicationUser : IdentityUser
 {
-    // ici on peut ajouter des prorpiétés supplémentaires pour l'utilisateur
-    // par exemple :
     public string? Nom { get; set; }
     public string? Prenom { get; set; }
 

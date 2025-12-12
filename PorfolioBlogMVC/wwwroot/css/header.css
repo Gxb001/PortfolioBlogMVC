@@ -1,5 +1,4 @@
-﻿/* Styles pour le header */
-.site-header {
+﻿.site-header {
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -61,7 +60,6 @@
     font-size: 0.9rem;
 }
 
-/* Style pour le menu déroulant des catégories */
 .navbar-nav .dropdown-menu {
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -78,7 +76,6 @@
     color: #6e8efb;
 }
 
-/* Style pour la section utilisateur */
 .navbar-nav .user-section {
     margin-left: 1rem;
 }
@@ -94,7 +91,6 @@
     background-color: #f8f9fa;
 }
 
-/* Style pour le footer */
 .site-footer {
     background-color: #f8f9fa;
     color: #6c757d;
@@ -110,7 +106,6 @@
     text-decoration: underline;
 }
 
-/* Effet de survol sur les liens */
 .nav-link::after {
     content: '';
     position: absolute;
@@ -126,7 +121,6 @@
     width: 100%;
 }
 
-/* Responsive */
 @media (max-width: 991.98px) {
     .navbar-collapse {
         border-top: 1px solid #e9ecef;

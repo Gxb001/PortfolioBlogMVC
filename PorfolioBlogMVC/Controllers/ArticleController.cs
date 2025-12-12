@@ -1,6 +1,4 @@
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,10 +20,13 @@ public class ArticleController : Controller
     // GET: Article
     public async Task<IActionResult> Index()
     {
-        var articles = _context.Articles
+        var articles = await _context.Articles
             .Include(a => a.Auteur)
-            .Include(a => a.Categorie);
-        return View(await articles.ToListAsync());
+            .Include(a => a.Categorie)
+            .Include(a => a.Commentaires)
+            .OrderByDescending(a => a.DatePublication)
+            .ToListAsync();
+        return View(articles);
     }
 
     // GET: Article/Details/5
@@ -37,6 +38,8 @@ public class ArticleController : Controller
         var article = await _context.Articles
             .Include(a => a.Auteur)
             .Include(a => a.Categorie)
+            .Include(a => a.Commentaires)
+            .ThenInclude(c => c.Auteur)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (article == null)
@@ -45,17 +48,17 @@ public class ArticleController : Controller
         return View(article);
     }
 
-    // GET: Article/Create
-    [Authorize] // Seuls les utilisateurs connectés peuvent créer un article
+    // GET: Article/Create (For AJAX)
+    [Authorize]
     public IActionResult Create()
     {
         ViewData["CategorieId"] = new SelectList(_context.Categories, "Id", "Nom");
-        return View();
+        return PartialView("_CreatePartial");
     }
 
     // POST: Article/Create
     [HttpPost]
-    [Authorize] // Seuls les utilisateurs connectés peuvent soumettre un article
+    [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(
         [Bind("Id,Titre,Contenu,ImagePrincipale,CategorieId")]
@@ -63,7 +66,6 @@ public class ArticleController : Controller
     {
         if (ModelState.IsValid)
         {
-            // Assigner automatiquement l'ID de l'utilisateur connecté comme auteur
             article.AuteurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             article.DatePublication = DateTime.UtcNow;
 
@@ -72,9 +74,8 @@ public class ArticleController : Controller
             return RedirectToAction(nameof(Index));
         }
 
-        // Recharger la liste des catégories en cas d'erreur
         ViewData["CategorieId"] = new SelectList(_context.Categories, "Id", "Nom", article.CategorieId);
-        return View(article);
+        return PartialView("_CreatePartial", article);
     }
 
     // GET: Article/Edit/5
@@ -101,7 +102,7 @@ public class ArticleController : Controller
     [Authorize]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id,
-        [Bind("Id,Titre,Contenu,ImagePrincipale,CategorieId")]
+        [Bind("Id,Titre,Contenu,ImagePrincipale,CategorieId,AuteurId,DatePublication")]
         Article article)
     {
         if (id != article.Id)
@@ -119,6 +120,10 @@ public class ArticleController : Controller
         {
             try
             {
+                // Conserver les valeurs originales
+                article.AuteurId = existingArticle.AuteurId;
+                article.DatePublication = existingArticle.DatePublication;
+
                 _context.Update(article);
                 await _context.SaveChangesAsync();
             }
@@ -177,6 +182,62 @@ public class ArticleController : Controller
         _context.Articles.Remove(article);
         await _context.SaveChangesAsync();
         return RedirectToAction(nameof(Index));
+    }
+
+    // POST: Article/AddComment
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddComment(int articleId, string contenu)
+    {
+        if (string.IsNullOrWhiteSpace(contenu))
+            return BadRequest("Le contenu du commentaire est requis.");
+
+        var article = await _context.Articles.FindAsync(articleId);
+        if (article == null)
+            return NotFound();
+
+        // Vérifier que l'utilisateur est l'auteur de l'article ou un admin
+        if (article.AuteurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+        var auteurId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var auteur = await _context.Users.FindAsync(auteurId);
+
+        if (auteur == null)
+            return Unauthorized();
+
+        var commentaire = new Commentaire
+        {
+            Contenu = contenu,
+            ArticleId = articleId,
+            AuteurId = auteurId,
+            DatePoste = DateTime.UtcNow
+        };
+
+        _context.Commentaires.Add(commentaire);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Details), new { id = articleId });
+    }
+
+    // POST: Article/DeleteComment
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteComment(int commentId, int articleId)
+    {
+        var commentaire = await _context.Commentaires.FindAsync(commentId);
+        if (commentaire == null)
+            return NotFound();
+
+        // Vérifier que l'utilisateur est l'auteur du commentaire ou un admin
+        if (commentaire.AuteurId != User.FindFirstValue(ClaimTypes.NameIdentifier) && !User.IsInRole("Admin"))
+            return Forbid();
+
+        _context.Commentaires.Remove(commentaire);
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Details), new { id = articleId });
     }
 
     private bool ArticleExists(int id)

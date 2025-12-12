@@ -1,56 +1,92 @@
 @model PorfolioBlogMVC.Models.Article
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Modifier l'article";
 }
 
-<h1>Edit</h1>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning text-dark">
+                    <h2 class="mb-0">
+                        <i class="bi bi-pencil-square"></i> Modifier l'article
+                    </h2>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="Edit" method="post">
+                        <input type="hidden" asp-for="Id"/>
+                        <input type="hidden" asp-for="AuteurId"/>
+                        <input type="hidden" asp-for="DatePublication"/>
 
-<h4>Article</h4>
-<hr/>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id"/>
-            <div class="form-group">
-                <label asp-for="Titre" class="control-label"></label>
-                <input asp-for="Titre" class="form-control"/>
-                <span asp-validation-for="Titre" class="text-danger"></span>
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Titre" class="form-label fw-bold"></label>
+                            <input asp-for="Titre" class="form-control form-control-lg"
+                                   placeholder="Titre de votre article"/>
+                            <span asp-validation-for="Titre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Contenu" class="form-label fw-bold"></label>
+                            <textarea asp-for="Contenu" class="form-control" rows="15"
+                                      placeholder="Rédigez le contenu de votre article..."></textarea>
+                            <span asp-validation-for="Contenu" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Vous pouvez utiliser des retours à la ligne pour
+                                structurer votre texte.
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ImagePrincipale" class="form-label fw-bold">URL de l'image
+                                principale</label>
+                            <input asp-for="ImagePrincipale" class="form-control"
+                                   placeholder="https://exemple.com/image.jpg"/>
+                            <span asp-validation-for="ImagePrincipale" class="text-danger"></span>
+                            <div class="form-text">
+                                <i class="bi bi-info-circle"></i> Insérez l'URL d'une image depuis le web.
+                            </div>
+                            @if (!string.IsNullOrEmpty(Model.ImagePrincipale))
+                            {
+                                <div class="mt-2">
+                                    <p class="small text-muted">Aperçu de l'image actuelle :</p>
+                                    <img src="@Model.ImagePrincipale" alt="Aperçu" class="img-thumbnail"
+                                         style="max-height: 200px;"/>
+                                </div>
+                            }
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="CategorieId" class="form-label fw-bold">Catégorie</label>
+                            <select asp-for="CategorieId" class="form-select" asp-items="ViewBag.CategorieId">
+                                <option value="">-- Sélectionnez une catégorie (optionnel) --</option>
+                            </select>
+                            <span asp-validation-for="CategorieId" class="text-danger"></span>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Annuler
+                            </a>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="bi bi-check-circle"></i> Enregistrer les modifications
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Contenu" class="control-label"></label>
-                <input asp-for="Contenu" class="form-control"/>
-                <span asp-validation-for="Contenu" class="text-danger"></span>
+
+            <div class="mt-3">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-link">
+                    <i class="bi bi-eye"></i> Voir l'article
+                </a>
             </div>
-            <div class="form-group">
-                <label asp-for="ImagePrincipale" class="control-label"></label>
-                <input asp-for="ImagePrincipale" class="form-control"/>
-                <span asp-validation-for="ImagePrincipale" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DatePublication" class="control-label"></label>
-                <input asp-for="DatePublication" class="form-control"/>
-                <span asp-validation-for="DatePublication" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="AuteurId" class="control-label"></label>
-                <select asp-for="AuteurId" class="form-control" asp-items="ViewBag.AuteurId"></select>
-                <span asp-validation-for="AuteurId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategorieId" class="control-label"></label>
-                <select asp-for="CategorieId" class="form-control" asp-items="ViewBag.CategorieId"></select>
-                <span asp-validation-for="CategorieId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary"/>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

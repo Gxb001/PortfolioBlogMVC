@@ -1,46 +1,119 @@
 @model PorfolioBlogMVC.Models.ElementPortfolio
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Modifier le projet";
+    var tags = ViewBag.Tags as List<Tag>;
+    var selectedTags = ViewBag.SelectedTags as int[];
+    var imageUrls = string.Join("\n", Model.Images.Select(i => i.Url));
 }
 
-<h1>Edit</h1>
+<link rel="stylesheet" href="~/css/portfolio-form.css"/>
 
-<h4>ElementPortfolio</h4>
-<hr/>
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id"/>
-            <div class="form-group">
-                <label asp-for="Titre" class="control-label"></label>
-                <input asp-for="Titre" class="form-control"/>
-                <span asp-validation-for="Titre" class="text-danger"></span>
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="form-card">
+                <div class="form-header" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                    <h2>
+                        <i class="fas fa-edit"></i> Modifier le Projet
+                    </h2>
+                    <p>Mettez à jour les informations de votre projet</p>
+                </div>
+
+                <form asp-action="Edit" method="post" class="portfolio-form">
+                    <input type="hidden" asp-for="Id"/>
+                    <input type="hidden" asp-for="CreateurId"/>
+                    <input type="hidden" asp-for="DateCreation"/>
+
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-info-circle"></i> Informations du projet</h4>
+
+                        <div class="mb-4">
+                            <label asp-for="Titre" class="form-label">
+                                <i class="fas fa-heading"></i> Titre du projet
+                            </label>
+                            <input asp-for="Titre" class="form-control form-control-lg"/>
+                            <span asp-validation-for="Titre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">
+                                <i class="fas fa-align-left"></i> Description détaillée
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="8"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-images"></i> Images du projet</h4>
+
+                        <div class="mb-4">
+                            <label for="imageUrls" class="form-label">
+                                <i class="fas fa-link"></i> URLs des images
+                            </label>
+                            <textarea name="imageUrls" id="imageUrls" class="form-control"
+                                      rows="6">@imageUrls</textarea>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle"></i> Une URL par ligne. La première image sera l'image
+                                principale.
+                            </div>
+                        </div>
+
+                        <div class="image-preview" id="imagePreview"
+                             style="@(Model.Images.Any() ? "display: block;" : "display: none;")">
+                            <h5>Aperçu des images</h5>
+                            <div class="preview-grid" id="previewGrid"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4><i class="fas fa-tags"></i> Tags</h4>
+
+                        <div class="tags-container">
+                            @if (tags != null && tags.Any())
+                            {
+                                @foreach (var tag in tags)
+                                {
+                                    <label class="tag-checkbox">
+                                        <input type="checkbox" name="selectedTags" value="@tag.Id"
+                                               @(selectedTags != null && selectedTags.Contains(tag.Id) ? "checked" : "")/>
+                                        <span class="tag-label"
+                                              style="@(!string.IsNullOrEmpty(tag.Couleur) ? $"background-color: {tag.Couleur}; color: white;" : "")">
+                                            @tag.Nom
+                                        </span>
+                                    </label>
+                                }
+                            }
+                            else
+                            {
+                                <p class="text-muted">Aucun tag disponible pour le moment.</p>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <div>
+                            <a asp-action="Index" class="btn btn-secondary btn-lg">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-info btn-lg">
+                                <i class="fas fa-eye"></i> Voir
+                            </a>
+                        </div>
+                        <button type="submit" class="btn btn-warning btn-lg">
+                            <i class="fas fa-save"></i> Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control"/>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DateCreation" class="control-label"></label>
-                <input asp-for="DateCreation" class="form-control"/>
-                <span asp-validation-for="DateCreation" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreateurId" class="control-label"></label>
-                <select asp-for="CreateurId" class="form-control" asp-items="ViewBag.CreateurId"></select>
-                <span asp-validation-for="CreateurId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary"/>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script src="~/js/portfolio-form.js"></script>
+}

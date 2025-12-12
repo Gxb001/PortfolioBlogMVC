@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PorfolioBlogMVC.Data;
 
@@ -11,9 +12,11 @@ using PorfolioBlogMVC.Data;
 namespace PorfolioBlogMVC.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251211195933_FixCommentaireRequired")]
+    partial class FixCommentaireRequired
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -255,9 +258,6 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("AuteurId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -282,8 +282,6 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("AuteurId");
 
                     b.HasIndex("CategorieId");
@@ -305,9 +303,6 @@ namespace PorfolioBlogMVC.Data.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Nom")
-                        .IsUnique();
 
                     b.ToTable("Categories");
                 });
@@ -351,9 +346,6 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("ApplicationUserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("CreateurId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -372,8 +364,6 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ApplicationUserId");
-
                     b.HasIndex("CreateurId");
 
                     b.ToTable("ElementsPortfolio");
@@ -387,15 +377,8 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<int>("ElementPortfolioId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("EstImagePrincipale")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Url")
                         .IsRequired()
@@ -416,10 +399,6 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Couleur")
-                        .HasMaxLength(7)
-                        .HasColumnType("nvarchar(7)");
-
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -427,25 +406,7 @@ namespace PorfolioBlogMVC.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Nom")
-                        .IsUnique();
-
                     b.ToTable("Tags");
-                });
-
-            modelBuilder.Entity("PortfolioTag", b =>
-                {
-                    b.Property<int>("ElementPortfolioId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ElementPortfolioId", "TagId");
-
-                    b.HasIndex("TagId");
-
-                    b.ToTable("PortfolioTag");
                 });
 
             modelBuilder.Entity("ArticleTag", b =>
@@ -516,20 +477,15 @@ namespace PorfolioBlogMVC.Data.Migrations
 
             modelBuilder.Entity("PorfolioBlogMVC.Models.Article", b =>
                 {
-                    b.HasOne("PorfolioBlogMVC.Models.ApplicationUser", null)
-                        .WithMany("Articles")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("PorfolioBlogMVC.Models.ApplicationUser", "Auteur")
-                        .WithMany()
+                        .WithMany("Articles")
                         .HasForeignKey("AuteurId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PorfolioBlogMVC.Models.CategorieArticle", "Categorie")
                         .WithMany("Articles")
-                        .HasForeignKey("CategorieId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .HasForeignKey("CategorieId");
 
                     b.Navigation("Auteur");
 
@@ -541,13 +497,13 @@ namespace PorfolioBlogMVC.Data.Migrations
                     b.HasOne("PorfolioBlogMVC.Models.Article", "Article")
                         .WithMany("Commentaires")
                         .HasForeignKey("ArticleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("PorfolioBlogMVC.Models.ApplicationUser", "Auteur")
                         .WithMany()
                         .HasForeignKey("AuteurId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Article");
@@ -557,14 +513,10 @@ namespace PorfolioBlogMVC.Data.Migrations
 
             modelBuilder.Entity("PorfolioBlogMVC.Models.ElementPortfolio", b =>
                 {
-                    b.HasOne("PorfolioBlogMVC.Models.ApplicationUser", null)
-                        .WithMany("ElementsPortfolio")
-                        .HasForeignKey("ApplicationUserId");
-
                     b.HasOne("PorfolioBlogMVC.Models.ApplicationUser", "Createur")
-                        .WithMany()
+                        .WithMany("ElementsPortfolio")
                         .HasForeignKey("CreateurId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Createur");
@@ -579,21 +531,6 @@ namespace PorfolioBlogMVC.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("ElementPortfolio");
-                });
-
-            modelBuilder.Entity("PortfolioTag", b =>
-                {
-                    b.HasOne("PorfolioBlogMVC.Models.ElementPortfolio", null)
-                        .WithMany()
-                        .HasForeignKey("ElementPortfolioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PorfolioBlogMVC.Models.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("PorfolioBlogMVC.Models.ApplicationUser", b =>

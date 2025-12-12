@@ -15,8 +15,13 @@ public class ElementPortfolio
 
     // Relation avec l'utilisateur
     [ForeignKey(nameof(Createur))] public required string CreateurId { get; set; }
-    public required ApplicationUser Createur { get; set; }
+
+    // Propriété de navigation - EF la charge automatiquement
+    public ApplicationUser Createur { get; set; } = null!;
 
     // Images (one-to-many)
     public ICollection<PortfolioImage> Images { get; set; } = new List<PortfolioImage>();
+
+    // Tags (many-to-many)
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 }
