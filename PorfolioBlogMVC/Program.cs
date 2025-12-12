@@ -2,12 +2,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PorfolioBlogMVC.Data;
 using PorfolioBlogMVC.Models;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection") ??
-                         throw new InvalidOperationException("Connection string 'PorfolioBlogMVCContext' not found.")));
 
 // DB
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
@@ -16,6 +12,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// Identity
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = false;
@@ -44,37 +41,56 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<ApplicationDbContext>();
 
         // Créer le rôle "Admin" s'il n'existe pas
-        if (!await roleManager.RoleExistsAsync("Admin")) await roleManager.CreateAsync(new IdentityRole("Admin"));
-
-        // Créer un utilisateur admin
-        var adminUser = new ApplicationUser
+        // Créer le rôle "Admin" et "Standard" s'ils n'existent pas
+        var roles = new[] { "Admin", "Standard" };
+        foreach (var role in roles)
         {
-            UserName = "GabAdmin",
-            Email = "admin@example.com",
-            Nom = "Ferrer",
-            Prenom = "Gabriel",
-            EmailConfirmed = true
-        };
-        var adminPassword = "Azerty31!";
-        var adminUserExists = await userManager.FindByEmailAsync(adminUser.Email);
-        if (adminUserExists == null)
-        {
-            var createAdmin = await userManager.CreateAsync(adminUser, adminPassword);
-            if (createAdmin.Succeeded) await userManager.AddToRoleAsync(adminUser, "Admin");
+            if (!await roleManager.RoleExistsAsync(role))
+                await roleManager.CreateAsync(new IdentityRole(role));
         }
 
-        // Créer un utilisateur standard (peut écrire des articles)
-        var standardUser = new ApplicationUser
+        // Utilisateur Admin
+        var adminEmail = "admin@example.com";
+        var adminUser = await userManager.FindByEmailAsync(adminEmail);
+        if (adminUser == null)
         {
-            UserName = "FoucaultStandard",
-            Email = "user@example.com",
-            Nom = "Lapeze",
-            Prenom = "Foucault",
-            EmailConfirmed = true
-        };
-        var standardPassword = "Azerty31!";
-        var standardUserExists = await userManager.FindByEmailAsync(standardUser.Email);
-        if (standardUserExists == null) await userManager.CreateAsync(standardUser, standardPassword);
+            adminUser = new ApplicationUser
+            {
+                UserName = "GabAdmin",
+                Email = adminEmail,
+                Nom = "Ferrer",
+                Prenom = "Gabriel",
+                EmailConfirmed = true
+            };
+            await userManager.CreateAsync(adminUser, "Azerty31!");
+        }
+        if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+
+        // Utilisateur Standard
+        var standardEmail = "user@example.com";
+        var standardUser = await userManager.FindByEmailAsync(standardEmail);
+        if (standardUser == null)
+        {
+            standardUser = new ApplicationUser
+            {
+                UserName = "FoucaultStandard",
+                Email = standardEmail,
+                Nom = "Lapeze",
+                Prenom = "Foucault",
+                EmailConfirmed = true
+            };
+            await userManager.CreateAsync(standardUser, "Azerty31!");
+        }
+
+        // Ajouter le rôle Standard si nécessaire
+        if (!await userManager.IsInRoleAsync(standardUser, "Standard"))
+        {
+            await userManager.AddToRoleAsync(standardUser, "Standard");
+        }
+
 
         await context.SaveChangesAsync();
     }
@@ -104,8 +120,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    "default",
-    "{controller=Home}/{action=Index}/{id?}");
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
 
