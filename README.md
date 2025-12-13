@@ -1,64 +1,67 @@
-# PortfolioBlogMVC - Guide de démarrage
+# PortfolioBlogMVC
 
-Ce guide décrit les étapes pour préparer l'environnement, résoudre les erreurs courantes (LocalDB / certificat / dotnet-ef) et exécuter les migrations pour `PortfolioBlogMVC`.
+## 📝 Description
+**PortfolioBlogMVC** est une application web développée en **ASP.NET Core MVC** combinant un **portfolio personnel** avec un **système de blog**.  
+Elle permet à un utilisateur de présenter ses **projets**, **articles** et **éléments de portfolio**, tout en offrant des fonctionnalités avancées de **gestion de contenu** : catégories, tags et commentaires.
 
-## Prérequis
-1. Windows (développement local).  
-2. .NET SDK 8\.0.x installé (`dotnet --version`).  
-3. Visual Studio / JetBrains Rider (optionnel).  
-4. SQL Server Express LocalDB ou une instance SQL Server (ex: `.\SQLEXPRESS`).  
+---
 
-## Étapes d'installation rapides
+## 🎯 Objectif du Projet
+L’objectif principal est de créer une **plateforme personnelle** pour les développeurs ou professionnels souhaitant :
+- Mettre en valeur leurs projets.
+- Partager des articles de blog.
+- Interagir avec les visiteurs via un système de commentaires.
+- Gérer facilement le contenu grâce à un tableau de bord administrateur et un système d’authentification intégré.
 
-1\. Mettre à jour/installer `dotnet-ef` (PowerShell)  
-- Mettre à jour si déjà installé :  
-  `dotnet tool update --global dotnet-ef --version 8.0.20`  
-- Sinon installer :  
-  `dotnet tool install --global dotnet-ef --version 8.0.20`
+---
 
-2\. Mettre à jour les packages NuGet (si nécessaire)  
-- Exemple :  
-  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.Design --version 8.0.20`  
-  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.SqlServer --version 8.0.20`  
-  `dotnet add PortfolioBlogMVC package Microsoft.EntityFrameworkCore.Tools --version 8.0.20`
+## ⚙️ Fonctionnalités
+- **Gestion des articles** : Création, édition, suppression et affichage d’articles de blog.  
+- **Catégories d’articles** : Organisation des articles par catégories.  
+- **Éléments de portfolio** : Présentation de projets ou réalisations.  
+- **Tags** : Étiquetage des articles pour une meilleure recherche.  
+- **Commentaires** : Possibilité de commenter les articles.  
+- **Authentification** : Gestion des utilisateurs et rôles via **ASP.NET Core Identity**.  
+- **Interface utilisateur** : Vues Razor modernes et responsive basées sur **Bootstrap**.
 
-3\. Installer / vérifier LocalDB (si vous utilisez `(localdb)\mssqllocaldb`)  
-- Vérifier les instances : `sqllocaldb info`  
-- Créer et démarrer l'instance par défaut si nécessaire :  
-  `sqllocaldb create MSSQLLocalDB`  
-  `sqllocaldb start MSSQLLocalDB`  
-- Si `sqllocaldb` n'est pas reconnu : installez SQL Server Express (LocalDB) depuis le site Microsoft ou via Chocolatey :  
-  `choco install sql-server-express -y`  
-- Après installation, ouvrez un nouveau terminal.
+---
 
-4\. Alternative : utiliser `.\SQLEXPRESS`  
-- Modifier la chaîne de connexion dans `PortfolioBlogMVC/appsettings.json` pour pointer vers `.\SQLEXPRESS` si vous préférez cette instance.
+## 🧱 Architecture
+L’application suit le modèle **MVC (Modèle-Vue-Contrôleur)** d’ASP.NET Core.
 
-## Chaîne de connexion & problème de certificat
-- Pour le développement, si vous obtenez l'erreur SSL "autorité qui n'est pas approuvée", ajoutez dans la chaîne de connexion : `TrustServerCertificate=True` (ou `Encrypt=False`).  
-- Exemple de clé à vérifier dans `PortfolioBlogMVC/appsettings.json` :  
-  `DefaultConnection` doit contenir `TrustServerCertificate=True` ou `Encrypt=False` si vous ne gérez pas de certificat approuvé.
+### Structure des Dossiers
+- `Controllers/` : Gère les requêtes HTTP (ex. `ArticleController`, `HomeController`).  
+- `Models/` : Définit les entités de données (ex. `Article`, `ApplicationUser`, `Commentaire`).  
+- `Views/` : Contient les vues Razor pour le rendu HTML.  
+- `Data/` : Gestion des données avec **Entity Framework Core** (migrations incluses).  
+- `Areas/Identity/` : Pages d’authentification et gestion des utilisateurs.  
+- `Components/` : Composants de vue réutilisables (ex. `CategorieMenuViewComponent`).  
+- `wwwroot/` : Ressources statiques (CSS, JavaScript, images).
 
-Sécurité : en production, installez un certificat émis par une CA approuvée ou ajoutez l'AC racine dans les Trusted Root Certification Authorities, puis supprimez `TrustServerCertificate=True`.
+---
 
-## Migrations et mise à jour de la base
-1\. Créer une migration (si nécessaire) :  
-`dotnet ef migrations add InitialCreate --project PortfolioBlogMVC --startup-project PortfolioBlogMVC`
+## 🗄️ Base de Données
+- Utilise **Entity Framework Core** avec **SQL Server**.  
+- Les migrations permettent d’initialiser et de mettre à jour le schéma.  
+- Contexte principal : `ApplicationDbContext`.
 
-2\. Appliquer la migration / créer la base :  
-`dotnet ef database update --project PortfolioBlogMVC --startup-project PortfolioBlogMVC`
+---
 
-Remarque : ces commandes n'ont pas besoin que l'application tourne.
+## 🧰 Technologies Utilisées
+| Type | Technologies |
+|------|---------------|
+| Langages | C#, JavaScript |
+| Frameworks | ASP.NET Core MVC, Entity Framework Core |
+| Front-End | Bootstrap, jQuery |
+| Base de données | SQL Server |
 
-## Résolution rapide des erreurs rencontrées
-- `\'sqllocaldb' n’est pas reconnu` : installer LocalDB et relancer le terminal.  
-- Erreur "Unable to locate a Local Database Runtime installation" : installer SQL Server Express LocalDB.  
-- Erreur SSL "autorité qui n’est pas approuvée" : pour dev, ajouter `TrustServerCertificate=True` ; pour prod, installer un certificat valide.
+---
 
-## Vérifications utiles
-- `dotnet --info` pour vérifier le SDK.  
-- `dotnet-ef --version` pour vérifier la version des outils.  
-- `sqllocaldb info` pour lister les instances LocalDB.  
-- Ouvrir le service SQL Server dans les services Windows pour vérifier l'état de l'instance `MSSQL$SQLEXPRESS` ou similaire.
+## 🚀 Installation et Configuration
 
+### Prérequis
+- [`.NET 8.0 SDK`](https://dotnet.microsoft.com/)  
+- **SQL Server** ou une base de données compatible.
 
+### Étapes d’installation
+1. **Cloner le dépôt :**
